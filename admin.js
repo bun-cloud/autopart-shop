@@ -4,6 +4,89 @@
  */
 
 // ========================================
+// PASSWORD PROTECTION
+// ========================================
+const ADMIN_PASSWORD = "admin123"; // Change this password to whatever you want
+
+// Check if admin is logged in
+function checkAdminAuth() {
+    const isLoggedIn = localStorage.getItem('adminLoggedIn');
+    
+    if (isLoggedIn === 'true') {
+        // User is logged in, show admin panel
+        showAdminPanel();
+    } else {
+        // User is not logged in, show login overlay
+        showLoginScreen();
+    }
+}
+
+// Show login screen
+function showLoginScreen() {
+    const overlay = document.getElementById('loginOverlay');
+    const body = document.getElementById('adminBody');
+    if (overlay) {
+        overlay.classList.remove('hidden');
+    }
+    if (body) {
+        body.classList.add('admin-locked');
+    }
+}
+
+// Show admin panel
+function showAdminPanel() {
+    const overlay = document.getElementById('loginOverlay');
+    const body = document.getElementById('adminBody');
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
+    if (body) {
+        body.classList.remove('admin-locked');
+    }
+}
+
+// Handle login form submission
+function initLoginHandler() {
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const passwordInput = document.getElementById('adminPassword');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const enteredPassword = passwordInput.value;
+            
+            // Simple password check (in production, use server-side validation)
+            if (enteredPassword === ADMIN_PASSWORD) {
+                // Password correct
+                localStorage.setItem('adminLoggedIn', 'true');
+                showAdminPanel();
+                passwordInput.value = ''; // Clear password field
+                loginError.style.display = 'none';
+            } else {
+                // Password incorrect
+                loginError.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        });
+    }
+}
+
+// Logout function
+function logout() {
+    localStorage.removeItem('adminLoggedIn');
+    showLoginScreen();
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkAdminAuth();
+    initLoginHandler();
+});
+
+// ========================================
 // DATABASE INITIALIZATION
 // ========================================
 const defaultInventory = [

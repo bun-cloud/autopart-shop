@@ -37,6 +37,173 @@ body {
     line-height: 1.6;
 }
 
+/* Locked state when not logged in */
+.admin-locked {
+    overflow: hidden;
+}
+
+/* Login Overlay */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--black-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    visibility: visible;
+    transition: var(--transition);
+}
+
+.login-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.login-container {
+    background: var(--black-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 3rem;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    margin-bottom: 2rem;
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 1.5rem;
+}
+
+.login-header h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.login-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.login-input-group {
+    position: relative;
+}
+
+.login-input-group svg {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    color: var(--grey-medium);
+}
+
+.login-input-group input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3.25rem;
+    background: var(--black-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.login-input-group input:focus {
+    outline: none;
+    border-color: var(--orange-accent);
+}
+
+.login-input-group input::placeholder {
+    color: var(--grey-medium);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--orange-accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.login-btn:hover {
+    background: var(--orange-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(204, 85, 0, 0.3);
+}
+
+.login-error {
+    color: var(--danger);
+    font-size: 0.9rem;
+    background: rgba(244, 67, 54, 0.1);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.login-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.back-to-store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.back-to-store:hover {
+    color: var(--orange-accent);
+}
+
+.back-to-store svg {
+    width: 18px;
+    height: 18px;
+}
+
 /* Admin Container */
 .admin-container {
     display: flex;
@@ -84,6 +251,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    flex: 1;
 }
 
 .admin-nav-link {
@@ -95,6 +263,9 @@ body {
     text-decoration: none;
     border-radius: 8px;
     transition: var(--transition);
+    width: 100%;
+    text-align: left;
+    font-size: 0.95rem;
 }
 
 .admin-nav-link svg {
@@ -110,6 +281,19 @@ body {
 
 .admin-nav-link.active {
     background: var(--orange-accent);
+    color: white;
+}
+
+.admin-nav-link.logout-link {
+    margin-top: auto;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.admin-nav-link.logout-link:hover {
+    background: var(--danger);
+    border-color: var(--danger);
     color: white;
 }
 
