@@ -6,7 +6,7 @@
 // ========================================
 // PASSWORD PROTECTION
 // ========================================
-const ADMIN_PASSWORD = "admin123"; // Change this password to whatever you want
+const ADMIN_PASSWORD = "L0ver262!!GI"; // Change this password to whatever you want
 
 // Check if admin is logged in
 function checkAdminAuth() {
