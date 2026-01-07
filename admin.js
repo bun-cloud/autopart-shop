@@ -8,7 +8,7 @@
 // ========================================
 
 // Hardcoded password - CHANGE THIS TO YOUR OWN PASSWORD
-const ADMIN_PASSWORD = 'L0ver262!!GI';
+const ADMIN_PASSWORD = 'admin123';
 
 // Initialize password authentication on page load
 function initAuth() {
@@ -18,16 +18,22 @@ function initAuth() {
     checkLoginStatus();
     
     // Handle Enter key on password field
-    document.getElementById('adminPassword').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            attemptLogin();
-        }
-    });
+    const passwordField = document.getElementById('adminPassword');
+    if (passwordField) {
+        passwordField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                attemptLogin();
+            }
+        });
+    }
 }
 
 // Attempt to login
 function attemptLogin() {
-    const password = document.getElementById('adminPassword').value;
+    const passwordField = document.getElementById('adminPassword');
+    if (!passwordField) return;
+    
+    const password = passwordField.value;
     
     if (!password) {
         showLoginError('Please enter the password');
@@ -95,9 +101,16 @@ function showLoginScreen() {
     }
     
     // Clear password field and show error
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('adminPassword').focus();
+    const passwordField = document.getElementById('adminPassword');
+    if (passwordField) {
+        passwordField.value = '';
+        passwordField.focus();
+    }
+    
+    const loginError = document.getElementById('loginError');
+    if (loginError) {
+        loginError.style.display = 'none';
+    }
 }
 
 // Show admin panel
@@ -145,156 +158,6 @@ function showLoginInfo(message) {
     }
 }
 
-// Make changePassword globally available
-window.changePassword = changePassword;
-
-function checkAdminAuth() {
-    const storedUser = localStorage.getItem('adminUser');
-    
-    if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        // Check if session is still valid (24 hour expiry)
-        const loggedInAt = new Date(userData.loggedInAt);
-        const now = new Date();
-        const hoursSinceLogin = (now - loggedInAt) / (1000 * 60 * 60);
-        
-        if (hoursSinceLogin < 168) { // 7 days
-            // Session is valid
-            showAdminPanel();
-            return;
-        } else {
-            // Session expired
-            logout();
-        }
-    }
-    
-    // User is not logged in, show login overlay
-    showLoginScreen();
-}
-
-function showLoginScreen() {
-    const overlay = document.getElementById('loginOverlay');
-    const body = document.getElementById('adminBody');
-    const loginInfo = document.getElementById('loginInfo');
-    const authFallback = document.getElementById('authFallback');
-    
-    if (overlay) {
-        overlay.classList.remove('hidden');
-    }
-    if (body) {
-        body.classList.add('admin-locked');
-    }
-    if (loginInfo) {
-        loginInfo.style.display = 'none';
-    }
-    if (authFallback) {
-        authFallback.style.display = 'none';
-    }
-    
-    // Hide error messages
-    showLoginError('');
-}
-
-function showAuthFallback() {
-    const authFallback = document.getElementById('authFallback');
-    if (authFallback) {
-        authFallback.style.display = 'block';
-    }
-}
-
-function showLoginInfo(message) {
-    const loginInfo = document.getElementById('loginInfo');
-    if (loginInfo) {
-        loginInfo.textContent = message;
-        loginInfo.style.display = message ? 'block' : 'none';
-    }
-}
-
-function showLoginError(message) {
-    const loginError = document.getElementById('loginError');
-    const loginSubtitle = document.getElementById('loginSubtitle');
-    
-    if (loginError) {
-        if (message) {
-            loginError.textContent = message;
-            loginError.style.display = 'block';
-        } else {
-            loginError.style.display = 'none';
-        }
-    }
-    
-    if (loginSubtitle) {
-        if (message) {
-            loginSubtitle.textContent = 'Authentication Failed';
-        } else {
-            loginSubtitle.textContent = 'Sign in with Netlify Identity';
-        }
-    }
-}
-
-function showAdminPanel() {
-    const overlay = document.getElementById('loginOverlay');
-    const body = document.getElementById('adminBody');
-    
-    if (overlay) {
-        overlay.classList.add('hidden');
-    }
-    if (body) {
-        body.classList.remove('admin-locked');
-    }
-}
-
-// Global function to check auth status
-function checkAuthStatus() {
-    console.log('=== AUTH STATUS ===');
-    
-    const loggedIn = localStorage.getItem('adminLoggedIn');
-    const loggedInAt = localStorage.getItem('adminLoggedInAt');
-    const passwordHash = localStorage.getItem('adminPasswordHash');
-    
-    console.log('Password configured:', passwordHash ? 'Yes' : 'No');
-    console.log('Logged in:', loggedIn === 'true' ? 'Yes' : 'No');
-    
-    if (loggedInAt) {
-        const loggedInTime = new Date(loggedInAt);
-        console.log('Logged in at:', loggedInTime.toLocaleString());
-    }
-    
-    console.log('=== END AUTH STATUS ===');
-}
-
-// Re-login function (if session expired)
-function relogin() {
-    logout();
-    showLoginScreen();
-}
-
-// Global function to logout
-function logout() {
-    localStorage.removeItem('adminLoggedIn');
-    localStorage.removeItem('adminLoggedInAt');
-    showLoginScreen();
-    showToast('You have been logged out');
-}
-
-// Get current user info
-function getCurrentUser() {
-    const loggedIn = localStorage.getItem('adminLoggedIn');
-    if (loggedIn === 'true') {
-        return {
-            loggedIn: true,
-            loggedInAt: localStorage.getItem('adminLoggedInAt')
-        };
-    }
-    return null;
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize password authentication
-    initAuth();
-});
-
 // ========================================
 // DATABASE INITIALIZATION
 // ========================================
@@ -304,27 +167,36 @@ const defaultInventory = [
         id: 1,
         name: "Premium Ceramic Brake Pad Set",
         category: "Brake System",
+        partNumber: "BRK-CER-001",
         price: 45.99,
         brand: "Brembo",
-        images: [generatePlaceholderImage("Brake Pads")],
+        stock: 48,
+        image: generatePlaceholderImage("Brake Pads"),
+        compatibility: ["Toyota Camry 2020-2023", "Honda Accord 2019-2022", "Nissan Altima 2020-2023"],
         description: "High-performance ceramic brake pads designed for superior stopping power and reduced noise. Features low dust formulation for cleaner wheels."
     },
     {
         id: 2,
         name: "Vented Brake Disc Kit",
         category: "Brake System",
+        partNumber: "BRK-DSC-002",
         price: 129.99,
         brand: "Brembo",
-        images: [generatePlaceholderImage("Brake Disc")],
+        stock: 32,
+        image: generatePlaceholderImage("Brake Disc"),
+        compatibility: ["Ford Mustang 2018-2023", "Chevrolet Camaro 2020-2023", "Dodge Challenger 2020-2023"],
         description: "Precision-machined vented brake discs with superior heat dissipation. Drilled and slotted design for improved braking performance in all conditions."
     },
     {
         id: 3,
         name: "Performance Brake Caliper",
         category: "Brake System",
+        partNumber: "BRK-CAL-003",
         price: 89.99,
         brand: "Monroe",
-        images: [generatePlaceholderImage("Caliper")],
+        stock: 24,
+        image: generatePlaceholderImage("Caliper"),
+        compatibility: ["Toyota Camry 2020-2023", "Honda Accord 2019-2022", "Subaru Legacy 2020-2023"],
         description: "Premium brake caliper with stainless steel pistons. Features anti-rust coating and comes complete with mounting hardware."
     },
     
@@ -333,27 +205,36 @@ const defaultInventory = [
         id: 4,
         name: "Premium Oil Filter",
         category: "Filters",
+        partNumber: "FIL-OIL-001",
         price: 12.99,
         brand: "Bosch",
-        images: [generatePlaceholderImage("Oil Filter")],
+        stock: 150,
+        image: generatePlaceholderImage("Oil Filter"),
+        compatibility: ["Universal Fit - Check Vehicle"],
         description: "High-capacity oil filter with premium filtration media. Traps contaminants effectively and ensures optimal engine protection."
     },
     {
         id: 5,
         name: "Cabin Air Filter with Activated Carbon",
         category: "Filters",
+        partNumber: "FIL-CAB-002",
         price: 24.99,
         brand: "Bosch",
-        images: [generatePlaceholderImage("Cabin Filter")],
+        stock: 85,
+        image: generatePlaceholderImage("Cabin Filter"),
+        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Ford Fusion 2019-2020"],
         description: "Multi-layer cabin air filter with activated carbon technology. Removes allergens, dust, and odors for cleaner cabin air."
     },
     {
         id: 6,
         name: "High-Performance Air Intake Filter",
         category: "Filters",
+        partNumber: "FIL-AIR-003",
         price: 34.99,
         brand: "K&N",
-        images: [generatePlaceholderImage("Air Filter")],
+        stock: 62,
+        image: generatePlaceholderImage("Air Filter"),
+        compatibility: ["Ford Mustang 2018-2023", "Chevrolet Camaro 2020-2023", "BMW 3 Series 2019-2023"],
         description: "Washable and reusable high-flow air filter. Provides improved airflow and engine protection. Lifetime warranty included."
     },
     
@@ -362,27 +243,36 @@ const defaultInventory = [
         id: 7,
         name: "Iridium Spark Plug Set (4-Pack)",
         category: "Engine Parts",
+        partNumber: "ENG-SPK-001",
         price: 39.99,
         brand: "NGK",
-        images: [generatePlaceholderImage("Spark Plugs")],
+        stock: 120,
+        image: generatePlaceholderImage("Spark Plugs"),
+        compatibility: ["Toyota Camry 2020-2023", "Honda Civic 2019-2023", "Ford Escape 2020-2022"],
         description: "Premium iridium spark plugs with trivalent metal plating. Provides excellent ignitability and extended service life up to 100,000 miles."
     },
     {
         id: 8,
         name: "Timing Belt Kit with Water Pump",
         category: "Engine Parts",
+        partNumber: "ENG-TIM-002",
         price: 149.99,
         brand: "Gates",
-        images: [generatePlaceholderImage("Timing Belt")],
+        stock: 28,
+        image: generatePlaceholderImage("Timing Belt"),
+        compatibility: ["Toyota Camry 2015-2017", "Honda Accord 2014-2017", "Nissan Rogue 2017-2020"],
         description: "Complete timing belt kit including tensioner, idler pulleys, and water pump. Designed for reliable performance and peace of mind."
     },
     {
         id: 9,
         name: "High-Volume Oil Pump",
         category: "Engine Parts",
+        partNumber: "ENG-OIL-003",
         price: 79.99,
         brand: "Melling",
-        images: [generatePlaceholderImage("Oil Pump")],
+        stock: 18,
+        image: generatePlaceholderImage("Oil Pump"),
+        compatibility: ["Ford Mustang 2018-2023", "Chevrolet Silverado 2019-2023", "GM Vehicles V8"],
         description: "High-performance oil pump with increased flow rate. Features precision-machined components for reliable lubrication."
     },
     
@@ -391,27 +281,36 @@ const defaultInventory = [
         id: 10,
         name: "Premium AGM Car Battery",
         category: "Electrical",
+        partNumber: "ELC-BAT-001",
         price: 199.99,
         brand: "DieHard",
-        images: [generatePlaceholderImage("Battery")],
+        stock: 35,
+        image: generatePlaceholderImage("Battery"),
+        compatibility: ["Universal - Group Size 24/24F"],
         description: "Absorbent Glass Mat (AGM) technology battery with 3-year free replacement warranty. Superior starting power and vibration resistance."
     },
     {
         id: 11,
         name: "Alternator - 160 Amp High Output",
         category: "Electrical",
+        partNumber: "ELC-ALT-002",
         price: 189.99,
         brand: "Denso",
-        images: [generatePlaceholderImage("Alternator")],
+        stock: 22,
+        image: generatePlaceholderImage("Alternator"),
+        compatibility: ["Ford F-150 2018-2023", "Ford Expedition 2018-2023", "Lincoln Navigator 2018-2023"],
         description: "High-output 160 amp alternator for increased electrical demand vehicles. Features premium bearings and voltage regulation."
     },
     {
         id: 12,
         name: "LED Headlight Conversion Kit",
         category: "Electrical",
+        partNumber: "ELC-LED-003",
         price: 89.99,
         brand: "Philips",
-        images: [generatePlaceholderImage("LED Lights")],
+        stock: 45,
+        image: generatePlaceholderImage("LED Lights"),
+        compatibility: ["H11 Bulb Type", "9005 Bulb Type", "9006 Bulb Type"],
         description: "Plug-and-play LED conversion kit with 12,000 lumens output. Features integrated cooling fan and 50,000 hour lifespan."
     },
     
@@ -420,27 +319,36 @@ const defaultInventory = [
         id: 13,
         name: "Halogen Headlight Bulb - H11",
         category: "Lighting",
+        partNumber: "LGT-HAL-001",
         price: 24.99,
         brand: "Philips",
-        images: [generatePlaceholderImage("Headlight")],
+        stock: 95,
+        image: generatePlaceholderImage("Headlight"),
+        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Nissan Altima 2019-2023"],
         description: "Premium halogen headlight bulb with up to 150% brighter light. CO+Blue coating for improved visibility and style."
     },
     {
         id: 14,
         name: "LED Tail Light Assembly",
         category: "Lighting",
+        partNumber: "LGT-LED-002",
         price: 159.99,
         brand: "Philips",
-        images: [generatePlaceholderImage("Tail Light")],
+        stock: 28,
+        image: generatePlaceholderImage("Tail Light"),
+        compatibility: ["Ford Mustang 2018-2023", "Chevrolet Camaro 2020-2023", "Dodge Challenger 2020-2023"],
         description: "LED tail light assembly with sequential turn signals. Direct bolt-on replacement with premium finish."
     },
     {
         id: 15,
         name: "Fog Light Kit - LED",
         category: "Lighting",
+        partNumber: "LGT-FOG-003",
         price: 69.99,
         brand: "PIAA",
-        images: [generatePlaceholderImage("Fog Light")],
+        stock: 42,
+        image: generatePlaceholderImage("Fog Light"),
+        compatibility: ["Universal Fit - 3 Inch Round", "Toyota Tacoma 2016-2023", "Jeep Wrangler 2018-2023"],
         description: "High-performance LED fog lights with yellow or white options. Impact-resistant polycarbonate lens."
     },
     
@@ -449,27 +357,36 @@ const defaultInventory = [
         id: 16,
         name: "Performance Strut Assembly",
         category: "Suspension",
+        partNumber: "SUS-STR-001",
         price: 189.99,
         brand: "Monroe",
-        images: [generatePlaceholderImage("Strut")],
+        stock: 32,
+        image: generatePlaceholderImage("Strut"),
+        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Nissan Altima 2019-2023"],
         description: "Complete strut assembly with spring and mount. Designed for improved handling and ride comfort. Pre-assembled for easy installation."
     },
     {
         id: 17,
         name: "Sway Bar Link Kit",
         category: "Suspension",
+        partNumber: "SUS-SWY-002",
         price: 54.99,
         brand: "Moog",
-        images: [generatePlaceholderImage("Sway Link")],
+        stock: 65,
+        image: generatePlaceholderImage("Sway Link"),
+        compatibility: ["Ford F-150 2018-2023", "Ford Expedition 2018-2023", "Lincoln Navigator 2018-2023"],
         description: "Premium sway bar link kit with greasable joints. Features corrosion-resistant hardware and precise fitment."
     },
     {
         id: 18,
         name: "Shock Absorber Set",
         category: "Suspension",
+        partNumber: "SUS-SHK-003",
         price: 129.99,
         brand: "KYB",
-        images: [generatePlaceholderImage("Shocks")],
+        stock: 38,
+        image: generatePlaceholderImage("Shocks"),
+        compatibility: ["Honda Civic 2016-2023", "Toyota Corolla 2019-2023", "Mazda3 2019-2023"],
         description: "Pair of premium shock absorbers with gas charge technology. Provides consistent damping and improved stability."
     },
     
@@ -478,63 +395,84 @@ const defaultInventory = [
         id: 19,
         name: "Ceramic Brake Disc Pad Set",
         category: "Brake System",
+        partNumber: "BRK-KIT-004",
         price: 79.99,
         brand: "Bosch",
-        images: [generatePlaceholderImage("Brake Kit")],
+        stock: 55,
+        image: generatePlaceholderImage("Brake Kit"),
+        compatibility: ["BMW 3 Series 2019-2023", "Mercedes C-Class 2020-2023", "Audi A4 2020-2023"],
         description: "Complete brake pad and rotor kit with hardware. Premium ceramic formula for low dust and quiet operation."
     },
     {
         id: 20,
         name: "Fuel Filter",
         category: "Filters",
+        partNumber: "FIL-FUEL-004",
         price: 18.99,
         brand: "Bosch",
-        images: [generatePlaceholderImage("Fuel Filter")],
+        stock: 78,
+        image: generatePlaceholderImage("Fuel Filter"),
+        compatibility: ["Ford F-150 2018-2023", "Ford Explorer 2020-2023", "Lincoln Aviator 2020-2023"],
         description: "High-efficiency fuel filter with premium filtration media. Protects fuel injectors and ensures optimal fuel flow."
     },
     {
         id: 21,
         name: "Ignition Coil Pack",
         category: "Engine Parts",
+        partNumber: "ENG-IGN-004",
         price: 109.99,
         brand: "NGK",
-        images: [generatePlaceholderImage("Ignition Coil")],
+        stock: 42,
+        image: generatePlaceholderImage("Ignition Coil"),
+        compatibility: ["Toyota Camry 2020-2023", "Honda Accord 2019-2022", "Lexus ES 2020-2023"],
         description: "Premium ignition coil pack with OE-matched design. Provides reliable spark for improved combustion and fuel economy."
     },
     {
         id: 22,
         name: "Power Steering Pump",
         category: "Engine Parts",
+        partNumber: "ENG-STR-005",
         price: 149.99,
         brand: "Cardone",
-        images: [generatePlaceholderImage("Power Pump")],
+        stock: 25,
+        image: generatePlaceholderImage("Power Pump"),
+        compatibility: ["Chevrolet Silverado 2019-2023", "GMC Sierra 2019-2023", "Ram 1500 2019-2023"],
         description: "Remanufactured power steering pump with premium seals. Includes reservoir where applicable for complete replacement."
     },
     {
         id: 23,
         name: "Starter Motor - High Torque",
         category: "Electrical",
+        partNumber: "ELC-STR-004",
         price: 169.99,
         brand: "Denso",
-        images: [generatePlaceholderImage("Starter")],
+        stock: 30,
+        image: generatePlaceholderImage("Starter"),
+        compatibility: ["Ford F-150 2018-2023", "Ford Mustang 2018-2023", "Ford Expedition 2018-2023"],
         description: "High-torque starter motor for reliable starting in all conditions. Features premium bearings and solenoid."
     },
     {
         id: 24,
         name: "Control Arm Kit",
         category: "Suspension",
+        partNumber: "SUS-CTL-004",
         price: 199.99,
         brand: "Moog",
-        images: [generatePlaceholderImage("Control Arm")],
+        stock: 22,
+        image: generatePlaceholderImage("Control Arm"),
+        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Lexus ES 2020-2023"],
         description: "Complete control arm kit with ball joint and bushings. Precision-engineered for improved steering response and alignment."
     },
     {
         id: 25,
         name: "Wheel Hub Assembly",
         category: "Suspension",
+        partNumber: "SUS-WHL-005",
         price: 119.99,
         brand: "Moog",
-        images: [generatePlaceholderImage("Hub Assembly")],
+        stock: 36,
+        image: generatePlaceholderImage("Hub Assembly"),
+        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Nissan Altima 2019-2023"],
         description: "Premium wheel hub assembly with integrated ABS sensor. Pre-adjusted bearings and seals for easy installation."
     }
 ];
@@ -553,34 +491,7 @@ let currentPage = 'dashboard';
 function loadInventory() {
     const stored = localStorage.getItem('inventory_db');
     if (stored) {
-        try {
-            inventory = JSON.parse(stored);
-            
-            // Migrate old format to new format if needed
-            if (inventory.length > 0 && inventory[0].hasOwnProperty('image') && !inventory[0].hasOwnProperty('images')) {
-                inventory = inventory.map(product => ({
-                    ...product,
-                    images: [product.image]
-                }));
-                saveInventory();
-            }
-            
-            // Ensure all products have the sold field
-            let needsSave = false;
-            inventory.forEach(product => {
-                if (!product.hasOwnProperty('sold')) {
-                    product.sold = false;
-                    needsSave = true;
-                }
-            });
-            if (needsSave) {
-                saveInventory();
-            }
-        } catch (e) {
-            console.error('Error parsing inventory from localStorage:', e);
-            inventory = [...defaultInventory];
-            saveInventory();
-        }
+        inventory = JSON.parse(stored);
     } else {
         inventory = [...defaultInventory];
         saveInventory();
@@ -818,10 +729,14 @@ window.deleteCategory = deleteCategory;
 function updateDashboard() {
     // Calculate stats
     const totalProducts = inventory.length;
-    const totalValue = inventory.reduce((sum, p) => sum + p.price, 0);
+    const lowStock = inventory.filter(p => p.stock > 0 && p.stock <= 10).length;
+    const outOfStock = inventory.filter(p => p.stock === 0).length;
+    const totalValue = inventory.reduce((sum, p) => sum + (p.price * p.stock), 0);
     
     // Update stat cards
     document.getElementById('totalProducts').textContent = totalProducts;
+    document.getElementById('lowStock').textContent = lowStock;
+    document.getElementById('outOfStock').textContent = outOfStock;
     document.getElementById('totalValue').textContent = `$${totalValue.toFixed(2)}`;
     
     // Render recent products (last 5)
@@ -829,13 +744,34 @@ function updateDashboard() {
     const recentContainer = document.getElementById('recentProducts');
     recentContainer.innerHTML = recentProducts.map(product => `
         <div class="recent-item">
-            <img src="${product.images[0]}" alt="${product.name}">
+            <img src="${product.image}" alt="${product.name}">
             <div class="recent-item-info">
                 <div class="recent-item-name">${product.name}</div>
                 <div class="recent-item-meta">${product.category} | $${product.price.toFixed(2)}</div>
             </div>
+            <span class="stock-badge ${product.stock === 0 ? 'out-of-stock' : product.stock <= 10 ? 'low-stock' : 'in-stock'}">
+                ${product.stock} in stock
+            </span>
         </div>
     `).join('');
+    
+    // Render low stock items
+    const lowStockItems = inventory.filter(p => p.stock <= 10 && p.stock > 0);
+    const lowStockContainer = document.getElementById('lowStockList');
+    if (lowStockItems.length === 0) {
+        lowStockContainer.innerHTML = '<p style="color: var(--text-secondary); padding: 1rem;">No low stock items</p>';
+    } else {
+        lowStockContainer.innerHTML = lowStockItems.map(product => `
+            <div class="low-stock-item">
+                <img src="${product.image}" alt="${product.name}">
+                <div class="low-stock-item-info">
+                    <div class="recent-item-name">${product.name}</div>
+                    <div class="recent-item-meta">${product.brand}</div>
+                </div>
+                <span class="stock-badge low-stock">${product.stock} left</span>
+            </div>
+        `).join('');
+    }
 }
 
 // ========================================
@@ -847,7 +783,7 @@ function renderProductsTable(products = inventory) {
     if (products.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
                     No products found
                 </td>
             </tr>
@@ -860,9 +796,14 @@ function renderProductsTable(products = inventory) {
             <td>
                 <input type="checkbox" class="product-checkbox" data-id="${product.id}" onchange="toggleProductSelection(${product.id})">
             </td>
-            <td><img src="${product.images[0]}" alt="${product.name}"></td>
+            <td><img src="${product.image}" alt="${product.name}"></td>
             <td><strong>${product.name}</strong></td>
+            <td><code>${product.partNumber}</code></td>
+            <td>${product.category}</td>
             <td class="price">$${product.price.toFixed(2)}</td>
+            <td class="stock ${product.stock === 0 ? 'out-of-stock' : product.stock <= 10 ? 'low-stock' : ''}">
+                ${product.stock}
+            </td>
             <td>
                 <div class="action-buttons">
                     <button class="action-btn" onclick="editProduct(${product.id})" title="Edit">
@@ -947,12 +888,17 @@ function handleProductSubmit(e) {
     const product = {
         id: Date.now(),
         name: document.getElementById('productName').value.trim(),
+        partNumber: document.getElementById('productSKU').value.trim().toUpperCase(),
         category: document.getElementById('productCategory').value,
         brand: document.getElementById('productBrand').value.trim(),
         price: parseFloat(document.getElementById('productPrice').value),
-        sold: document.getElementById('productSold').checked,
+        stock: parseInt(document.getElementById('productStock').value),
         description: document.getElementById('productDescription').value.trim(),
-        images: tempImages.length > 0 ? [...tempImages] : [generatePlaceholderImage("Product")]
+        compatibility: document.getElementById('productCompatibility').value
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0),
+        image: document.getElementById('imagePreview').src || generatePlaceholderImage("Product")
     };
     
     inventory.push(product);
@@ -964,7 +910,8 @@ function handleProductSubmit(e) {
 
 function resetForm() {
     document.getElementById('productForm').reset();
-    clearTempImages('add');
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('imageUploadContent').style.display = 'block';
 }
 
 // ========================================
@@ -976,21 +923,23 @@ function editProduct(id) {
     
     document.getElementById('editProductId').value = product.id;
     document.getElementById('editProductName').value = product.name;
+    document.getElementById('editProductSKU').value = product.partNumber;
     document.getElementById('editProductCategory').value = product.category;
     document.getElementById('editProductBrand').value = product.brand;
     document.getElementById('editProductPrice').value = product.price;
-    document.getElementById('editProductSold').checked = product.sold || false;
+    document.getElementById('editProductStock').value = product.stock;
     document.getElementById('editProductDescription').value = product.description;
+    document.getElementById('editProductCompatibility').value = product.compatibility.join('\n');
     
-    // Load product images
-    loadProductImages(product.images || [product.image], 'edit');
+    const imagePreview = document.getElementById('editImagePreview');
+    imagePreview.src = product.image;
+    imagePreview.style.display = 'block';
     
     document.getElementById('editProductModal').classList.add('active');
 }
 
 function closeEditModal() {
     document.getElementById('editProductModal').classList.remove('active');
-    clearTempImages('edit');
 }
 
 function handleEditSubmit(e) {
@@ -1003,13 +952,23 @@ function handleEditSubmit(e) {
     inventory[index] = {
         ...inventory[index],
         name: document.getElementById('editProductName').value.trim(),
+        partNumber: document.getElementById('editProductSKU').value.trim().toUpperCase(),
         category: document.getElementById('editProductCategory').value,
         brand: document.getElementById('editProductBrand').value.trim(),
         price: parseFloat(document.getElementById('editProductPrice').value),
-        sold: document.getElementById('editProductSold').checked,
+        stock: parseInt(document.getElementById('editProductStock').value),
         description: document.getElementById('editProductDescription').value.trim(),
-        images: editTempImages.length > 0 ? [...editTempImages] : inventory[index].images
+        compatibility: document.getElementById('editProductCompatibility').value
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
     };
+    
+    // Check if new image was uploaded
+    const imagePreview = document.getElementById('editImagePreview');
+    if (imagePreview.src && !imagePreview.src.includes('data:image/svg+xml')) {
+        inventory[index].image = imagePreview.src;
+    }
     
     saveInventory();
     showToast('Product updated successfully!');
@@ -1063,173 +1022,57 @@ window.toggleProductSelection = toggleProductSelection;
 window.deleteSelectedProducts = deleteSelectedProducts;
 
 // ========================================
-// MULTI-IMAGE UPLOAD
+// IMAGE UPLOAD
 // ========================================
-// Store uploaded images temporarily
-let tempImages = [];
-let editTempImages = [];
-
-function setupMultiImageUpload() {
-    // Add Product Image Upload
-    const addUploadArea = document.getElementById('imageUploadArea');
-    const addFileInput = document.getElementById('productImage');
-    const addContent = document.getElementById('imageUploadContent');
-    const addPreviewContainer = document.getElementById('imagePreviewContainer');
-    const addPreviewList = document.getElementById('imagePreviewList');
-    const addMoreBtn = document.getElementById('addMoreImages');
-
-    addUploadArea.addEventListener('click', (e) => {
-        if (e.target.closest('.image-preview-item') || e.target.closest('.add-more-images')) return;
-        addFileInput.click();
-    });
-
-    addUploadArea.addEventListener('dragover', (e) => {
+function setupImageUpload(uploadAreaId, fileInputId, previewId, contentId) {
+    const uploadArea = document.getElementById(uploadAreaId);
+    const fileInput = document.getElementById(fileInputId);
+    const preview = document.getElementById(previewId);
+    const content = document.getElementById(contentId);
+    
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
-        addUploadArea.style.borderColor = 'var(--orange-accent)';
+        uploadArea.style.borderColor = 'var(--orange-accent)';
     });
-
-    addUploadArea.addEventListener('dragleave', () => {
-        addUploadArea.style.borderColor = 'var(--border-color)';
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = 'var(--border-color)';
     });
-
-    addUploadArea.addEventListener('drop', (e) => {
+    
+    uploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
-        addUploadArea.style.borderColor = 'var(--border-color)';
-        handleMultiImageFiles(e.dataTransfer.files, 'add');
+        uploadArea.style.borderColor = 'var(--border-color)';
+        const file = e.dataTransfer.files[0];
+        if (file) handleImageFile(file);
     });
-
-    addFileInput.addEventListener('change', (e) => {
-        handleMultiImageFiles(e.target.files, 'add');
+    
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleImageFile(file);
     });
-
-    addMoreBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        addFileInput.click();
-    });
-
-    // Edit Product Image Upload
-    const editUploadArea = document.getElementById('editImageUploadArea');
-    const editFileInput = document.getElementById('editProductImage');
-    const editContent = document.getElementById('editImageUploadContent');
-    const editPreviewContainer = document.getElementById('editImagePreviewContainer');
-    const editPreviewList = document.getElementById('editImagePreviewList');
-    const editMoreBtn = document.getElementById('editAddMoreImages');
-
-    editUploadArea.addEventListener('click', (e) => {
-        if (e.target.closest('.image-preview-item') || e.target.closest('.add-more-images')) return;
-        editFileInput.click();
-    });
-
-    editUploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        editUploadArea.style.borderColor = 'var(--orange-accent)';
-    });
-
-    editUploadArea.addEventListener('dragleave', () => {
-        editUploadArea.style.borderColor = 'var(--border-color)';
-    });
-
-    editUploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        editUploadArea.style.borderColor = 'var(--border-color)';
-        handleMultiImageFiles(e.dataTransfer.files, 'edit');
-    });
-
-    editFileInput.addEventListener('change', (e) => {
-        handleMultiImageFiles(e.target.files, 'edit');
-    });
-
-    editMoreBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        editFileInput.click();
-    });
-}
-
-function handleMultiImageFiles(files, type) {
-    const maxImages = 20;
-    const currentImages = type === 'add' ? tempImages : editTempImages;
-
-    if (currentImages.length >= maxImages) {
-        showToast(`Maximum ${maxImages} images allowed`);
-        return;
-    }
-
-    Array.from(files).forEach(file => {
-        if (currentImages.length >= maxImages) return;
+    
+    function handleImageFile(file) {
         if (!file.type.startsWith('image/')) {
-            showToast('Please upload image files only');
+            showToast('Please upload an image file');
             return;
         }
+        
         if (file.size > 5 * 1024 * 1024) {
             showToast('Image size must be less than 5MB');
             return;
         }
-
+        
         const reader = new FileReader();
         reader.onload = (e) => {
-            currentImages.push(e.target.result);
-            renderImagePreviews(type);
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            if (content) content.style.display = 'none';
         };
         reader.readAsDataURL(file);
-    });
-}
-
-function renderImagePreviews(type) {
-    const currentImages = type === 'add' ? tempImages : editTempImages;
-    const previewList = document.getElementById(type === 'add' ? 'imagePreviewList' : 'editImagePreviewList');
-    const previewContainer = document.getElementById(type === 'add' ? 'imagePreviewContainer' : 'editImagePreviewContainer');
-    const uploadContent = document.getElementById(type === 'add' ? 'imageUploadContent' : 'editImageUploadContent');
-
-    if (currentImages.length === 0) {
-        previewContainer.style.display = 'none';
-        uploadContent.style.display = 'block';
-        return;
     }
-
-    previewContainer.style.display = 'flex';
-    uploadContent.style.display = 'none';
-
-    previewList.innerHTML = currentImages.map((img, index) => `
-        <div class="image-preview-item ${index === 0 ? 'primary' : ''}" data-index="${index}">
-            <img src="${img}" alt="Image ${index + 1}">
-            <button class="remove-image" onclick="removeImage(${index}, '${type}')">&times;</button>
-            ${index !== 0 ? `<button class="set-primary" onclick="setPrimaryImage(${index}, '${type}')">Set Primary</button>` : ''}
-        </div>
-    `).join('');
 }
-
-function removeImage(index, type) {
-    const currentImages = type === 'add' ? tempImages : editTempImages;
-    currentImages.splice(index, 1);
-    renderImagePreviews(type);
-}
-
-function setPrimaryImage(index, type) {
-    const currentImages = type === 'add' ? tempImages : editTempImages;
-    const image = currentImages.splice(index, 1)[0];
-    currentImages.unshift(image);
-    renderImagePreviews(type);
-}
-
-function clearTempImages(type) {
-    if (type === 'add') {
-        tempImages = [];
-    } else {
-        editTempImages = [];
-    }
-    renderImagePreviews(type);
-}
-
-function loadProductImages(images, type) {
-    const currentImages = type === 'add' ? tempImages : editTempImages;
-    currentImages.length = 0;
-    currentImages.push(...images);
-    renderImagePreviews(type);
-}
-
-// Make functions globally available
-window.removeImage = removeImage;
-window.setPrimaryImage = setPrimaryImage;
 
 // ========================================
 // SEARCH & FILTER
@@ -1240,13 +1083,14 @@ function setupSearchAndFilter() {
     
     function filterProducts() {
         const searchTerm = searchInput.value.toLowerCase().trim();
-        const category = categoryFilter ? categoryFilter.value : '';
+        const category = categoryFilter.value;
         
         let filtered = inventory;
         
         if (searchTerm) {
             filtered = filtered.filter(product =>
                 product.name.toLowerCase().includes(searchTerm) ||
+                product.partNumber.toLowerCase().includes(searchTerm) ||
                 product.brand.toLowerCase().includes(searchTerm) ||
                 product.description.toLowerCase().includes(searchTerm)
             );
@@ -1260,55 +1104,7 @@ function setupSearchAndFilter() {
     }
     
     searchInput.addEventListener('input', filterProducts);
-    if (categoryFilter) {
-        categoryFilter.addEventListener('change', filterProducts);
-    }
-}
-
-// ========================================
-// EXPORT TO CSV (GOOGLE SHEETS)
-// ========================================
-function exportToCSV() {
-    // Get current inventory
-    const stored = localStorage.getItem('inventory_db');
-    const inventory = stored ? JSON.parse(stored) : [...defaultInventory];
-    
-    if (inventory.length === 0) {
-        showToast('No products to export');
-        return;
-    }
-    
-    // Define CSV headers - only ID, Name, and Price
-    const headers = ['Product ID', 'Product Name', 'Price'];
-    
-    // Create CSV content
-    let csvContent = headers.join(',') + '\n';
-    
-    inventory.forEach(product => {
-        const row = [
-            product.id,
-            `"${product.name.replace(/"/g, '""')}"`,
-            product.price
-        ];
-        csvContent += row.join(',') + '\n';
-    });
-    
-    // Create and download file
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    // Generate filename with date
-    const date = new Date().toISOString().split('T')[0];
-    link.setAttribute('href', url);
-    link.setAttribute('download', `inventory_export_${date}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast(`Exported ${inventory.length} products to CSV`);
+    categoryFilter.addEventListener('change', filterProducts);
 }
 
 // ========================================
@@ -1330,6 +1126,10 @@ function showToast(message) {
 // EVENT LISTENERS
 // ========================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize authentication first
+    initAuth();
+    
+    // Load inventory and update UI
     loadInventory();
     updateCategoryDatalists();
     updateDashboard();
@@ -1347,7 +1147,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('editProductForm').addEventListener('submit', handleEditSubmit);
     
     // Image upload
-    setupMultiImageUpload();
+    setupImageUpload('imageUploadArea', 'productImage', 'imagePreview', 'imageUploadContent');
+    setupImageUpload('editImageUploadArea', 'editProductImage', 'editImagePreview', null);
     
     // Search and filter
     setupSearchAndFilter();
@@ -1387,8 +1188,6 @@ window.closeDeleteModal = closeDeleteModal;
 window.confirmDelete = confirmDelete;
 window.resetForm = resetForm;
 window.resetDatabase = resetDatabase;
-window.exportToCSV = exportToCSV;
-window.checkAuthStatus = checkAuthStatus;
-window.relogin = relogin;
 window.attemptLogin = attemptLogin;
 window.logout = logout;
+window.checkLoginStatus = checkLoginStatus;
