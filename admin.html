@@ -7,9 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
-    
-    <!-- Netlify Identity Widget -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <link rel="icon" type="image/png" href="logo.png">
     
     <!-- Password Protection Overlay -->
     <div class="login-overlay" id="loginOverlay">
@@ -17,23 +15,31 @@
             <div class="login-header">
                 <img src="logo.png" alt="Logo" class="login-logo">
                 <h2>Admin Panel</h2>
-                <p id="loginSubtitle">Sign in with Netlify Identity</p>
+                <p id="loginSubtitle">Enter Password to Access</p>
             </div>
             <div class="login-form" id="loginForm">
-                <button type="button" class="login-btn" id="netlifyLoginBtn" onclick="try { netlifyIdentity.open(); } catch(e) { console.error('Login error:', e); alert('Please wait for authentication to initialize'); }">
+                <input type="password" id="adminPassword" placeholder="Enter admin password" style="width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; outline: none; transition: border-color 0.2s;">
+                <input type="password" id="confirmPassword" placeholder="Confirm password (for signup only)" style="width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; outline: none; transition: border-color 0.2s; display: none;">
+                <button type="button" class="login-btn" id="loginBtn" onclick="attemptLogin()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;margin-right:10px;">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
+                    </svg>
+                    <span id="loginBtnText">Access Admin Panel</span>
+                </button>
                 <p class="login-info" id="loginInfo" style="display: none;"></p>
                 <p class="login-error" id="loginError" style="display: none;"></p>
                 
-                <!-- Fallback for mobile/issue troubleshooting -->
-                <div id="authFallback" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Having trouble? Try these options:</p>
-                    <button type="button" class="login-btn" id="manualLoginBtn" onclick="try { netlifyIdentity.open(); } catch(e) { console.error('Login error:', e); alert('Please wait for authentication to initialize'); }" style="background: var(--grey-dark); font-size: 0.9rem; padding: 0.75rem 1rem;">
-                        Open Login Modal
-                    </button>
-                    <p style="font-size: 0.75rem; color: var(--grey-medium); margin-top: 0.75rem;">
-                        Or copy your invite link and open it in a different browser.
-                    </p>
-                </div>
+                <!-- Toggle between login and signup -->
+                <p style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <a href="#" onclick="togglePasswordMode(); return false;" id="passwordModeToggle" style="color: var(--orange-accent); text-decoration: none;">First time? Create a password</a>
+                </p>
+                
+                <!-- Forgot password -->
+                <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--grey-medium);">
+                    <a href="#" onclick="forgotPassword(); return false;" style="color: var(--text-secondary); text-decoration: none;">Forgot password?</a>
+                </p>
             </div>
             <div class="login-footer">
                 <a href="index.html" class="back-to-store">
@@ -101,6 +107,13 @@
                         <line x1="21" y1="12" x2="9" y2="12"/>
                     </svg>
                     Logout
+                </button>
+                <button class="admin-nav-link" onclick="changePassword()" style="cursor: pointer;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Change Password
                 </button>
             </nav>
         </aside>

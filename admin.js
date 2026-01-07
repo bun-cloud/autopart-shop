@@ -1,214 +1,301 @@
 /**
  * druzroadstar shop - Admin Inventory Management
- * Features: Product CRUD, image upload, Netlify Identity authentication
+ * Features: Product CRUD, image upload, simple password authentication
  */
 
 // ========================================
-// NETLIFY IDENTITY AUTHENTICATION
+// SIMPLE PASSWORD AUTHENTICATION
 // ========================================
 
-let identityReady = false;
-let identityInitAttempts = 0;
-const MAX_INIT_ATTEMPTS = 50;
+// Default password - CHANGE THIS AFTER FIRST LOGIN!
+const DEFAULT_PASSWORD = 'admin123';
 
-// Initialize Netlify Identity with proper widget loading
-function initNetlifyIdentity() {
-    showLoginInfo('Initializing authentication...');
-    console.log('Starting Netlify Identity initialization...');
+// Password mode: 'login' or 'setup'
+let passwordMode = 'login';
+
+// Initialize password authentication on page load
+function initAuth() {
+    console.log('Initializing simple password authentication...');
     
-    // Function to initialize once widget is ready
-    const doInit = () => {
-        identityInitAttempts++;
-        
-        // Log what we have
-        if (typeof netlifyIdentity === 'undefined') {
-            console.log(`Attempt ${identityInitAttempts}: netlifyIdentity is undefined`);
-        } else {
-            console.log(`Attempt ${identityInitAttempts}: netlifyIdentity exists`);
-            console.log('  - typeof init:', typeof netlifyIdentity.init);
-            console.log('  - typeof open:', typeof netlifyIdentity.open);
-            console.log('  - typeof currentUser:', typeof netlifyIdentity.currentUser);
+    // Check if password is already set up
+    const storedHash = localStorage.getItem('adminPasswordHash');
+    if (!storedHash) {
+        // No password set up yet - show setup mode
+        passwordMode = 'setup';
+        showPasswordSetup();
+    } else {
+        // Check if already logged in
+        checkLoginStatus();
+    }
+    
+    // Handle Enter key on password field
+    document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            attemptLogin();
         }
-        
-        if (typeof netlifyIdentity === 'undefined') {
-            if (identityInitAttempts >= MAX_INIT_ATTEMPTS) {
-                console.error('Netlify Identity failed to load after maximum attempts');
-                showLoginError('Authentication system failed to load. Please refresh.');
-                showAuthFallback();
-                return;
-            }
-            // Try again in 200ms
-            setTimeout(doInit, 200);
+    });
+    
+    // Handle Enter key on confirm password field
+    document.getElementById('confirmPassword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            attemptLogin();
+        }
+    });
+}
+
+// Toggle between login and setup mode
+function togglePasswordMode() {
+    if (passwordMode === 'login') {
+        passwordMode = 'setup';
+        showPasswordSetup();
+    } else {
+        passwordMode = 'login';
+        showLoginForm();
+    }
+}
+
+// Show password setup form (first time user)
+function showPasswordSetup() {
+    document.getElementById('loginSubtitle').textContent = 'Create Admin Password';
+    document.getElementById('loginBtnText').textContent = 'Create Password';
+    document.getElementById('confirmPassword').style.display = 'block';
+    document.getElementById('passwordModeToggle').textContent = 'Already have a password? Log in';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    document.getElementById('adminPassword').focus();
+}
+
+// Show login form
+function showLoginForm() {
+    document.getElementById('loginSubtitle').textContent = 'Enter Password to Access';
+    document.getElementById('loginBtnText').textContent = 'Access Admin Panel';
+    document.getElementById('confirmPassword').style.display = 'none';
+    document.getElementById('passwordModeToggle').textContent = 'First time? Create a password';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    document.getElementById('adminPassword').focus();
+}
+
+// Simple hash function (not cryptographic, just obfuscation)
+function hashPassword(password) {
+    let hash = 0;
+    for (let i = 0; i < password.length; i++) {
+        const char = password.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return 'hash_' + Math.abs(hash).toString(16);
+}
+
+// Attempt to login or create password
+function attemptLogin() {
+    const password = document.getElementById('adminPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (!password) {
+        showLoginError('Please enter a password');
+        return;
+    }
+    
+    if (passwordMode === 'setup') {
+        // Creating new password
+        if (password.length < 4) {
+            showLoginError('Password must be at least 4 characters');
             return;
         }
         
-        // Check if init is available
-        if (typeof netlifyIdentity.init !== 'function') {
-            console.log('netlifyIdentity.init is not a function yet');
-            if (identityInitAttempts >= MAX_INIT_ATTEMPTS) {
-                console.error('Netlify Identity init not available after maximum attempts');
-                showLoginError('Authentication system not ready. Please refresh.');
-                showAuthFallback();
-                return;
-            }
-            // Try again in 200ms
-            setTimeout(doInit, 200);
+        if (password !== confirmPassword) {
+            showLoginError('Passwords do not match');
             return;
         }
         
-        // Widget is ready!
-        identityReady = true;
-        console.log('✓ Netlify Identity widget ready');
+        // Store password hash
+        const hash = hashPassword(password);
+        localStorage.setItem('adminPasswordHash', hash);
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminLoggedInAt', new Date().toISOString());
         
-        // Use hardcoded Netlify site URL
-        const SITE_URL = 'https://druzroadstarshop.netlify.app';
-        console.log('Site URL:', SITE_URL);
+        console.log('Password created successfully');
+        showLoginInfo('Password created! Welcome to Admin Panel.');
         
-        try {
-            // Initialize Identity widget
-            netlifyIdentity.init({
-                APIUrl: `${SITE_URL}/.netlify/identity`,
-                locale: 'en'
-            });
-            console.log('✓ Netlify Identity initialized successfully');
-        } catch (e) {
-            console.error('Error configuring Netlify Identity:', e);
-            showLoginError('Error configuring authentication. Please refresh.');
-            return;
-        }
-        
-        // Handle login button click
-        const loginBtn = document.getElementById('netlifyLoginBtn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', () => {
-                console.log('Login button clicked');
-                if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.open === 'function') {
-                    try {
-                        netlifyIdentity.open();
-                        console.log('Login modal opened successfully');
-                    } catch (e) {
-                        console.error('Error opening login modal:', e);
-                        alert('Error opening login: ' + e.message);
-                    }
-                } else {
-                    console.error('netlifyIdentity.open is not available');
-                    alert('Authentication not ready. Please refresh the page.');
-                }
-            });
-        }
-        
-        // Handle manual login button (fallback for mobile)
-        const manualLoginBtn = document.getElementById('manualLoginBtn');
-        if (manualLoginBtn) {
-            manualLoginBtn.addEventListener('click', () => {
-                console.log('Manual login button clicked');
-                if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.open === 'function') {
-                    try {
-                        netlifyIdentity.open();
-                        console.log('Login modal opened successfully');
-                    } catch (e) {
-                        console.error('Error opening login modal:', e);
-                        alert('Error opening login: ' + e.message);
-                    }
-                } else {
-                    console.error('netlifyIdentity.open is not available');
-                    alert('Authentication not ready. Please refresh the page.');
-                }
-            });
-        }
-        
-        // Listen for init event
-        netlifyIdentity.on('init', (user) => {
-            console.log('Identity initialized', user ? `User: ${user.email}` : 'No user');
-        });
-        
-        // Listen for login events
-        netlifyIdentity.on('login', (user) => {
-            console.log('Login success:', user.email);
-            localStorage.setItem('adminUser', JSON.stringify({
-                email: user.email,
-                id: user.id,
-                token: user.token,
-                loggedInAt: new Date().toISOString()
-            }));
-            netlifyIdentity.close();
+        // Show admin panel after short delay
+        setTimeout(() => {
             showAdminPanel();
-            showToast(`Welcome, ${user.email}!`);
-        });
+            showToast('Welcome to Admin Panel!');
+        }, 1000);
         
-        // Listen for signup events (for invite acceptance)
-        netlifyIdentity.on('signup', (user) => {
-            console.log('Signup success:', user.email);
-            localStorage.setItem('adminUser', JSON.stringify({
-                email: user.email,
-                id: user.id,
-                token: user.token,
-                loggedInAt: new Date().toISOString()
-            }));
-            netlifyIdentity.close();
-            showAdminPanel();
-            showToast(`Account created! Welcome, ${user.email}!`);
-        });
+    } else {
+        // Logging in
+        const storedHash = localStorage.getItem('adminPasswordHash');
+        const inputHash = hashPassword(password);
         
-        // Listen for logout events
-        netlifyIdentity.on('logout', () => {
-            console.log('User logged out');
-            localStorage.removeItem('adminUser');
-            showLoginScreen();
-            showToast('You have been logged out');
-        });
-        
-        // Listen for errors
-        netlifyIdentity.on('error', (err) => {
-            console.error('Identity error:', err);
-            showLoginError(`Authentication error: ${err.message || 'Unknown error'}`);
-            showAuthFallback();
-        });
-        
-        // Check URL for invite token
-        const hash = window.location.hash;
-        console.log('Current URL hash:', hash);
-        
-        if (hash && (hash.includes('invite_token') || hash.includes('confirmation_token'))) {
-            // User is clicking an invite link
-            console.log('Invite token detected in URL');
-            showLoginInfo('Processing invitation...');
-            showAuthFallback();
+        if (inputHash === storedHash) {
+            // Login successful
+            localStorage.setItem('adminLoggedIn', 'true');
+            localStorage.setItem('adminLoggedInAt', new Date().toISOString());
             
-            // Try to open the signup modal automatically
-            setTimeout(() => {
-                try {
-                    netlifyIdentity.open('signup');
-                } catch (e) {
-                    console.warn('Could not auto-open signup modal:', e);
-                }
-            }, 500);
-        }
-        
-        // Check if user is already logged in
-        const currentUser = netlifyIdentity.currentUser();
-        if (currentUser) {
-            handleSuccessfulLogin(currentUser);
+            console.log('Login successful');
+            showAdminPanel();
+            showToast('Welcome back!');
         } else {
-            showLoginScreen();
-            showAuthFallback(); // Always show fallback for manual access
+            // Login failed
+            showLoginError('Incorrect password');
+            console.log('Login failed - incorrect password');
         }
-    };
-    
-    // Start initialization with a small delay to ensure script is parsed
-    setTimeout(doInit, 50);
+    }
 }
 
-function handleSuccessfulLogin(user) {
-    localStorage.setItem('adminUser', JSON.stringify({
-        email: user.email,
-        id: user.id,
-        token: user.token,
-        loggedInAt: new Date().toISOString()
-    }));
-    showAdminPanel();
-    console.log(`Logged in as: ${user.email}`);
+// Check if user is already logged in
+function checkLoginStatus() {
+    const loggedIn = localStorage.getItem('adminLoggedIn');
+    const loggedInAt = localStorage.getItem('adminLoggedInAt');
+    
+    if (loggedIn && loggedInAt) {
+        // Check if session is still valid (7 days)
+        const loggedInTime = new Date(loggedInAt);
+        const now = new Date();
+        const hoursSinceLogin = (now - loggedInTime) / (1000 * 60 * 60);
+        
+        if (hoursSinceLogin < 168) { // 7 days
+            // Session is valid
+            showAdminPanel();
+            return;
+        } else {
+            // Session expired
+            logout();
+        }
+    }
+    
+    // Not logged in, show login screen
+    showLoginScreen();
 }
+
+// Logout function
+function logout() {
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminLoggedInAt');
+    showLoginScreen();
+    showToast('You have been logged out');
+}
+
+// Change password function
+function changePassword() {
+    const currentPassword = prompt('Enter current password:');
+    if (!currentPassword) return;
+    
+    const currentHash = hashPassword(currentPassword);
+    const storedHash = localStorage.getItem('adminPasswordHash');
+    
+    if (currentHash !== storedHash) {
+        showToast('Current password is incorrect');
+        return;
+    }
+    
+    const newPassword = prompt('Enter new password (min 4 characters):');
+    if (!newPassword || newPassword.length < 4) {
+        showToast('Password must be at least 4 characters');
+        return;
+    }
+    
+    const confirmPassword = prompt('Confirm new password:');
+    if (newPassword !== confirmPassword) {
+        showToast('Passwords do not match');
+        return;
+    }
+    
+    // Update password
+    const newHash = hashPassword(newPassword);
+    localStorage.setItem('adminPasswordHash', newHash);
+    
+    showToast('Password changed successfully!');
+    console.log('Password changed successfully');
+}
+
+// Forgot password - clears stored password to allow creating a new one
+function forgotPassword() {
+    const confirm = confirm('This will clear your current password. You will need to create a new one. Continue?');
+    if (confirm) {
+        localStorage.removeItem('adminPasswordHash');
+        localStorage.removeItem('adminLoggedIn');
+        localStorage.removeItem('adminLoggedInAt');
+        passwordMode = 'setup';
+        showPasswordSetup();
+        showLoginInfo('Password cleared. Create a new password below.');
+    }
+}
+
+// Show login screen
+function showLoginScreen() {
+    const overlay = document.getElementById('loginOverlay');
+    const body = document.getElementById('adminBody');
+    
+    if (overlay) {
+        overlay.classList.remove('hidden');
+    }
+    if (body) {
+        body.classList.add('admin-locked');
+    }
+    
+    // Show appropriate form based on mode
+    const storedHash = localStorage.getItem('adminPasswordHash');
+    if (!storedHash) {
+        passwordMode = 'setup';
+        showPasswordSetup();
+    } else {
+        passwordMode = 'login';
+        showLoginForm();
+    }
+}
+
+// Show admin panel
+function showAdminPanel() {
+    const overlay = document.getElementById('loginOverlay');
+    const body = document.getElementById('adminBody');
+    
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
+    if (body) {
+        body.classList.remove('admin-locked');
+    }
+}
+
+// Show login error
+function showLoginError(message) {
+    const loginError = document.getElementById('loginError');
+    const loginSubtitle = document.getElementById('loginSubtitle');
+    
+    if (loginError) {
+        if (message) {
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+        } else {
+            loginError.style.display = 'none';
+        }
+    }
+    
+    if (loginSubtitle) {
+        if (message) {
+            loginSubtitle.textContent = 'Access Denied';
+        } else {
+            loginSubtitle.textContent = 'Enter Password to Access';
+        }
+    }
+}
+
+// Show login info
+function showLoginInfo(message) {
+    const loginInfo = document.getElementById('loginInfo');
+    if (loginInfo) {
+        loginInfo.textContent = message;
+        loginInfo.style.display = message ? 'block' : 'none';
+    }
+}
+
+// Make changePassword globally available
+window.changePassword = changePassword;
 
 function checkAdminAuth() {
     const storedUser = localStorage.getItem('adminUser');
@@ -220,16 +307,13 @@ function checkAdminAuth() {
         const now = new Date();
         const hoursSinceLogin = (now - loggedInAt) / (1000 * 60 * 60);
         
-        if (hoursSinceLogin < 24) {
+        if (hoursSinceLogin < 168) { // 7 days
             // Session is valid
             showAdminPanel();
             return;
         } else {
             // Session expired
-            localStorage.removeItem('adminUser');
-            if (typeof netlifyIdentity !== 'undefined') {
-                netlifyIdentity.logout();
-            }
+            logout();
         }
     }
     
@@ -309,117 +393,55 @@ function showAdminPanel() {
     }
 }
 
-// Global function to open login modal
-function openLoginModal() {
-    console.log('=== DIAGNOSTIC INFO ===');
-    console.log('netlifyIdentity exists:', typeof netlifyIdentity !== 'undefined');
-    
-    if (typeof netlifyIdentity !== 'undefined') {
-        console.log('netlifyIdentity object keys:', Object.keys(netlifyIdentity));
-        console.log('netlifyIdentity.open exists:', typeof netlifyIdentity.open === 'function');
-        console.log('netlifyIdentity.init exists:', typeof netlifyIdentity.init === 'function');
-        console.log('netlifyIdentity.currentUser exists:', typeof netlifyIdentity.currentUser === 'function');
-        
-        if (typeof netlifyIdentity.open === 'function') {
-            try {
-                netlifyIdentity.open();
-                console.log('Login modal opened successfully');
-            } catch (e) {
-                console.error('Error opening login modal:', e);
-                alert('Error opening login: ' + e.message);
-            }
-        } else {
-            console.error('netlifyIdentity.open is not available');
-            alert('Authentication not ready. Please refresh the page.');
-        }
-    } else {
-        console.error('netlifyIdentity is not available');
-        alert('Authentication not ready. Please refresh the page.');
-    }
-    console.log('=== END DIAGNOSTIC ===');
-}
-
-// Global diagnostic function
+// Global function to check auth status
 function checkAuthStatus() {
     console.log('=== AUTH STATUS ===');
-    console.log('netlifyIdentity:', typeof netlifyIdentity);
-    console.log('identityReady:', identityReady);
-    console.log('identityInitAttempts:', identityInitAttempts);
     
-    if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.currentUser === 'function') {
-        const currentUser = netlifyIdentity.currentUser();
-        console.log('Current Netlify user:', currentUser ? currentUser.email : 'None');
+    const loggedIn = localStorage.getItem('adminLoggedIn');
+    const loggedInAt = localStorage.getItem('adminLoggedInAt');
+    const passwordHash = localStorage.getItem('adminPasswordHash');
+    
+    console.log('Password configured:', passwordHash ? 'Yes' : 'No');
+    console.log('Logged in:', loggedIn === 'true' ? 'Yes' : 'No');
+    
+    if (loggedInAt) {
+        const loggedInTime = new Date(loggedInAt);
+        console.log('Logged in at:', loggedInTime.toLocaleString());
     }
     
-    const storedUser = localStorage.getItem('adminUser');
-    console.log('Stored user in localStorage:', storedUser ? 'Yes' : 'No');
-    if (storedUser) {
-        try {
-            const userData = JSON.parse(storedUser);
-            console.log('Stored email:', userData.email);
-        } catch (e) {
-            console.error('Error parsing stored user:', e);
-        }
-    }
     console.log('=== END AUTH STATUS ===');
 }
 
-// Manual login function - use this if login event doesn't fire
-function manualLogin() {
-    console.log('=== MANUAL LOGIN CHECK ===');
-    if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.currentUser === 'function') {
-        const user = netlifyIdentity.currentUser();
-        if (user) {
-            console.log('User detected from Netlify:', user.email);
-            console.log('Logging in manually...');
-            
-            // Store user data
-            localStorage.setItem('adminUser', JSON.stringify({
-                email: user.email,
-                id: user.id,
-                token: user.token,
-                loggedInAt: new Date().toISOString()
-            }));
-            
-            // Show admin panel
-            showAdminPanel();
-            showToast(`Welcome, ${user.email}!`);
-            console.log('Manual login complete!');
-        } else {
-            console.log('No user logged into Netlify Identity');
-            alert('Please log in using the Netlify Identity modal first, then click "Check Login Status" again.');
-        }
-    } else {
-        console.log('netlifyIdentity not available');
-        alert('netlifyIdentity not available');
-    }
-    console.log('=== END MANUAL LOGIN ===');
+// Re-login function (if session expired)
+function relogin() {
+    logout();
+    showLoginScreen();
 }
 
 // Global function to logout
 function logout() {
-    if (typeof netlifyIdentity !== 'undefined') {
-        netlifyIdentity.logout();
-    }
-    localStorage.removeItem('adminUser');
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminLoggedInAt');
     showLoginScreen();
+    showToast('You have been logged out');
 }
 
 // Get current user info
 function getCurrentUser() {
-    const storedUser = localStorage.getItem('adminUser');
-    if (storedUser) {
-        return JSON.parse(storedUser);
+    const loggedIn = localStorage.getItem('adminLoggedIn');
+    if (loggedIn === 'true') {
+        return {
+            loggedIn: true,
+            loggedInAt: localStorage.getItem('adminLoggedInAt')
+        };
     }
     return null;
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    // Small delay to ensure Netlify Identity is loaded
-    setTimeout(() => {
-        initNetlifyIdentity();
-    }, 100);
+    // Initialize password authentication
+    initAuth();
 });
 
 // ========================================
@@ -1515,6 +1537,9 @@ window.confirmDelete = confirmDelete;
 window.resetForm = resetForm;
 window.resetDatabase = resetDatabase;
 window.exportToCSV = exportToCSV;
-window.openLoginModal = openLoginModal;
 window.checkAuthStatus = checkAuthStatus;
-window.manualLogin = manualLogin;
+window.relogin = relogin;
+window.changePassword = changePassword;
+window.forgotPassword = forgotPassword;
+window.attemptLogin = attemptLogin;
+window.togglePasswordMode = togglePasswordMode;
