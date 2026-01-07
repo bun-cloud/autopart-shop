@@ -22,6 +22,34 @@ async function validateInventoryConsistency() {
         warnings: []
     };
     
+    // Check if we're running locally (file:// protocol)
+    if (window.location.protocol === 'file:') {
+        console.log('⚠️  WARNING: Running from local file system');
+        console.log('   The fetch() API does not work with file:// protocol.');
+        console.log('   Please deploy to Netlify or run a local web server.');
+        console.log('   Example: npx serve . or python -m http.server');
+        console.log('');
+        validationResults.errors.push('Cannot load products from local file system');
+        validationResults.warnings.push('Deploy to Netlify or use a local web server');
+        
+        if (document.getElementById('validationResults')) {
+            document.getElementById('validationResults').innerHTML = `
+                <div style="padding: 1rem; background: rgba(255, 152, 0, 0.1); border-radius: 8px; margin-top: 1rem;">
+                    <strong style="color: #ff9800;">⚠️ Local Testing Detected</strong>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #c0c0c0;">
+                        Products cannot be loaded from local files. Please:
+                    </p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem; font-size: 0.85rem; color: #8a8a8a;">
+                        <li>Deploy to Netlify and test there, OR</li>
+                        <li>Run a local web server (npx serve .)</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        return { success: false };
+    }
+    
     // Load products using the same method as the main app
     const products = await loadAllProducts();
     
