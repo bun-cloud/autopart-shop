@@ -10,10 +10,6 @@
 [context.branch-deploy]
   environment = { }
 
-# Enable Decap CMS
-[[plugins]]
-  package = "decap-cms-netlify"
-
 # Redirects for clean URLs
 [[redirects]]
   from = "/admin/*"
