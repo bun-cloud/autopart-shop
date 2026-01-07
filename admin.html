@@ -20,21 +20,14 @@
                 <p id="loginSubtitle">Sign in with Netlify Identity</p>
             </div>
             <div class="login-form" id="loginForm">
-                <button type="button" class="login-btn" id="netlifyLoginBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;margin-right:10px;">
-                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                        <polyline points="10 17 15 12 10 7"/>
-                        <line x1="15" y1="12" x2="3" y2="12"/>
-                    </svg>
-                    Sign in with Netlify Identity
-                </button>
+                <button type="button" class="login-btn" id="netlifyLoginBtn" onclick="try { netlifyIdentity.open(); } catch(e) { console.error('Login error:', e); alert('Please wait for authentication to initialize'); }">
                 <p class="login-info" id="loginInfo" style="display: none;"></p>
                 <p class="login-error" id="loginError" style="display: none;"></p>
                 
                 <!-- Fallback for mobile/issue troubleshooting -->
                 <div id="authFallback" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
                     <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Having trouble? Try these options:</p>
-                    <button type="button" class="login-btn" id="manualLoginBtn" style="background: var(--grey-dark); font-size: 0.9rem; padding: 0.75rem 1rem;">
+                    <button type="button" class="login-btn" id="manualLoginBtn" onclick="try { netlifyIdentity.open(); } catch(e) { console.error('Login error:', e); alert('Please wait for authentication to initialize'); }" style="background: var(--grey-dark); font-size: 0.9rem; padding: 0.75rem 1rem;">
                         Open Login Modal
                     </button>
                     <p style="font-size: 0.75rem; color: var(--grey-medium); margin-top: 0.75rem;">

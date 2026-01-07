@@ -82,7 +82,18 @@ function initNetlifyIdentity() {
         if (loginBtn) {
             loginBtn.addEventListener('click', () => {
                 console.log('Login button clicked');
-                netlifyIdentity.open();
+                if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.open === 'function') {
+                    try {
+                        netlifyIdentity.open();
+                        console.log('Login modal opened successfully');
+                    } catch (e) {
+                        console.error('Error opening login modal:', e);
+                        alert('Error opening login: ' + e.message);
+                    }
+                } else {
+                    console.error('netlifyIdentity.open is not available');
+                    alert('Authentication not ready. Please refresh the page.');
+                }
             });
         }
         
@@ -91,7 +102,18 @@ function initNetlifyIdentity() {
         if (manualLoginBtn) {
             manualLoginBtn.addEventListener('click', () => {
                 console.log('Manual login button clicked');
-                netlifyIdentity.open();
+                if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.open === 'function') {
+                    try {
+                        netlifyIdentity.open();
+                        console.log('Login modal opened successfully');
+                    } catch (e) {
+                        console.error('Error opening login modal:', e);
+                        alert('Error opening login: ' + e.message);
+                    }
+                } else {
+                    console.error('netlifyIdentity.open is not available');
+                    alert('Authentication not ready. Please refresh the page.');
+                }
             });
         }
         
@@ -169,6 +191,7 @@ function initNetlifyIdentity() {
             handleSuccessfulLogin(currentUser);
         } else {
             showLoginScreen();
+            showAuthFallback(); // Always show fallback for manual access
         }
     };
     
@@ -286,7 +309,22 @@ function showAdminPanel() {
     }
 }
 
-// Logout function
+// Global function to open login modal
+function openLoginModal() {
+    if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.open === 'function') {
+        try {
+            netlifyIdentity.open();
+        } catch (e) {
+            console.error('Error opening login modal:', e);
+            alert('Error opening login: ' + e.message);
+        }
+    } else {
+        console.error('netlifyIdentity is not available');
+        alert('Authentication not ready. Please refresh the page.');
+    }
+}
+
+// Global function to logout
 function logout() {
     if (typeof netlifyIdentity !== 'undefined') {
         netlifyIdentity.logout();
@@ -1405,3 +1443,4 @@ window.confirmDelete = confirmDelete;
 window.resetForm = resetForm;
 window.resetDatabase = resetDatabase;
 window.exportToCSV = exportToCSV;
+window.openLoginModal = openLoginModal;
