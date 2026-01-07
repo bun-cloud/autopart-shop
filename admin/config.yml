@@ -7,14 +7,14 @@ local_backend:
   allow_library: true
 
 # Site configuration for Netlify Identity
-site_url: https://druzroadstar.netlify.app
+site_url: https://druzroadstarshop.netlify.app
 
 # Authentication settings
 auth_url: '/admin/auth'
 index_route: '/admin/'
 
 # Display settings
-display_url: https://druzroadstar.netlify.app
+display_url: https://druzroadstarshop.netlify.app
 
 media_folder: "images"
 public_folder: "/images"
