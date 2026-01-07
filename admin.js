@@ -7,26 +7,15 @@
 // SIMPLE PASSWORD AUTHENTICATION
 // ========================================
 
-// Default password - CHANGE THIS AFTER FIRST LOGIN!
-const DEFAULT_PASSWORD = 'admin123';
-
-// Password mode: 'login' or 'setup'
-let passwordMode = 'login';
+// Hardcoded password - CHANGE THIS TO YOUR OWN PASSWORD
+const ADMIN_PASSWORD = 'admin123';
 
 // Initialize password authentication on page load
 function initAuth() {
     console.log('Initializing simple password authentication...');
     
-    // Check if password is already set up
-    const storedHash = localStorage.getItem('adminPasswordHash');
-    if (!storedHash) {
-        // No password set up yet - show setup mode
-        passwordMode = 'setup';
-        showPasswordSetup();
-    } else {
-        // Check if already logged in
-        checkLoginStatus();
-    }
+    // Check if already logged in
+    checkLoginStatus();
     
     // Handle Enter key on password field
     document.getElementById('adminPassword').addEventListener('keypress', (e) => {
@@ -34,116 +23,29 @@ function initAuth() {
             attemptLogin();
         }
     });
-    
-    // Handle Enter key on confirm password field
-    document.getElementById('confirmPassword').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            attemptLogin();
-        }
-    });
 }
 
-// Toggle between login and setup mode
-function togglePasswordMode() {
-    if (passwordMode === 'login') {
-        passwordMode = 'setup';
-        showPasswordSetup();
-    } else {
-        passwordMode = 'login';
-        showLoginForm();
-    }
-}
-
-// Show password setup form (first time user)
-function showPasswordSetup() {
-    document.getElementById('loginSubtitle').textContent = 'Create Admin Password';
-    document.getElementById('loginBtnText').textContent = 'Create Password';
-    document.getElementById('confirmPassword').style.display = 'block';
-    document.getElementById('passwordModeToggle').textContent = 'Already have a password? Log in';
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('confirmPassword').value = '';
-    document.getElementById('adminPassword').focus();
-}
-
-// Show login form
-function showLoginForm() {
-    document.getElementById('loginSubtitle').textContent = 'Enter Password to Access';
-    document.getElementById('loginBtnText').textContent = 'Access Admin Panel';
-    document.getElementById('confirmPassword').style.display = 'none';
-    document.getElementById('passwordModeToggle').textContent = 'First time? Create a password';
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('confirmPassword').value = '';
-    document.getElementById('adminPassword').focus();
-}
-
-// Simple hash function (not cryptographic, just obfuscation)
-function hashPassword(password) {
-    let hash = 0;
-    for (let i = 0; i < password.length; i++) {
-        const char = password.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return 'hash_' + Math.abs(hash).toString(16);
-}
-
-// Attempt to login or create password
+// Attempt to login
 function attemptLogin() {
     const password = document.getElementById('adminPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
     
     if (!password) {
-        showLoginError('Please enter a password');
+        showLoginError('Please enter the password');
         return;
     }
     
-    if (passwordMode === 'setup') {
-        // Creating new password
-        if (password.length < 4) {
-            showLoginError('Password must be at least 4 characters');
-            return;
-        }
-        
-        if (password !== confirmPassword) {
-            showLoginError('Passwords do not match');
-            return;
-        }
-        
-        // Store password hash
-        const hash = hashPassword(password);
-        localStorage.setItem('adminPasswordHash', hash);
+    if (password === ADMIN_PASSWORD) {
+        // Login successful
         localStorage.setItem('adminLoggedIn', 'true');
         localStorage.setItem('adminLoggedInAt', new Date().toISOString());
         
-        console.log('Password created successfully');
-        showLoginInfo('Password created! Welcome to Admin Panel.');
-        
-        // Show admin panel after short delay
-        setTimeout(() => {
-            showAdminPanel();
-            showToast('Welcome to Admin Panel!');
-        }, 1000);
-        
+        console.log('Login successful');
+        showAdminPanel();
+        showToast('Welcome back!');
     } else {
-        // Logging in
-        const storedHash = localStorage.getItem('adminPasswordHash');
-        const inputHash = hashPassword(password);
-        
-        if (inputHash === storedHash) {
-            // Login successful
-            localStorage.setItem('adminLoggedIn', 'true');
-            localStorage.setItem('adminLoggedInAt', new Date().toISOString());
-            
-            console.log('Login successful');
-            showAdminPanel();
-            showToast('Welcome back!');
-        } else {
-            // Login failed
-            showLoginError('Incorrect password');
-            console.log('Login failed - incorrect password');
-        }
+        // Login failed
+        showLoginError('Incorrect password');
+        console.log('Login failed - incorrect password');
     }
 }
 
@@ -180,52 +82,6 @@ function logout() {
     showToast('You have been logged out');
 }
 
-// Change password function
-function changePassword() {
-    const currentPassword = prompt('Enter current password:');
-    if (!currentPassword) return;
-    
-    const currentHash = hashPassword(currentPassword);
-    const storedHash = localStorage.getItem('adminPasswordHash');
-    
-    if (currentHash !== storedHash) {
-        showToast('Current password is incorrect');
-        return;
-    }
-    
-    const newPassword = prompt('Enter new password (min 4 characters):');
-    if (!newPassword || newPassword.length < 4) {
-        showToast('Password must be at least 4 characters');
-        return;
-    }
-    
-    const confirmPassword = prompt('Confirm new password:');
-    if (newPassword !== confirmPassword) {
-        showToast('Passwords do not match');
-        return;
-    }
-    
-    // Update password
-    const newHash = hashPassword(newPassword);
-    localStorage.setItem('adminPasswordHash', newHash);
-    
-    showToast('Password changed successfully!');
-    console.log('Password changed successfully');
-}
-
-// Forgot password - clears stored password to allow creating a new one
-function forgotPassword() {
-    const confirm = confirm('This will clear your current password. You will need to create a new one. Continue?');
-    if (confirm) {
-        localStorage.removeItem('adminPasswordHash');
-        localStorage.removeItem('adminLoggedIn');
-        localStorage.removeItem('adminLoggedInAt');
-        passwordMode = 'setup';
-        showPasswordSetup();
-        showLoginInfo('Password cleared. Create a new password below.');
-    }
-}
-
 // Show login screen
 function showLoginScreen() {
     const overlay = document.getElementById('loginOverlay');
@@ -238,15 +94,10 @@ function showLoginScreen() {
         body.classList.add('admin-locked');
     }
     
-    // Show appropriate form based on mode
-    const storedHash = localStorage.getItem('adminPasswordHash');
-    if (!storedHash) {
-        passwordMode = 'setup';
-        showPasswordSetup();
-    } else {
-        passwordMode = 'login';
-        showLoginForm();
-    }
+    // Clear password field and show error
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('adminPassword').focus();
 }
 
 // Show admin panel
@@ -1539,7 +1390,5 @@ window.resetDatabase = resetDatabase;
 window.exportToCSV = exportToCSV;
 window.checkAuthStatus = checkAuthStatus;
 window.relogin = relogin;
-window.changePassword = changePassword;
-window.forgotPassword = forgotPassword;
 window.attemptLogin = attemptLogin;
-window.togglePasswordMode = togglePasswordMode;
+window.logout = logout;
