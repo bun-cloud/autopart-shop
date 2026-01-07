@@ -1,1 +1,9 @@
-
+{
+  "id": 1,
+  "name": "Premium Ceramic Brake Pad Set",
+  "category": "Brake System",
+  "price": 45.99,
+  "brand": "Brembo",
+  "description": "High-performance ceramic brake pads designed for superior stopping power and reduced noise. Features low dust formulation for cleaner wheels.",
+  "sold": false
+}

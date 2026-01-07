@@ -1,0 +1,9 @@
+{
+  "id": 10,
+  "name": "Premium AGM Car Battery",
+  "category": "Electrical",
+  "price": 199.99,
+  "brand": "DieHard",
+  "description": "Absorbent Glass Mat (AGM) technology battery with 3-year free replacement warranty. Superior starting power and vibration resistance.",
+  "sold": false
+}

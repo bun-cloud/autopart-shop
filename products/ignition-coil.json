@@ -1,0 +1,9 @@
+{
+  "id": 21,
+  "name": "Ignition Coil Pack",
+  "category": "Engine Parts",
+  "price": 109.99,
+  "brand": "NGK",
+  "description": "Premium ignition coil pack with OE-matched design. Provides reliable spark for improved combustion and fuel economy.",
+  "sold": false
+}

@@ -1,0 +1,9 @@
+{
+  "id": 20,
+  "name": "Fuel Filter",
+  "category": "Filters",
+  "price": 18.99,
+  "brand": "Bosch",
+  "description": "High-efficiency fuel filter with premium filtration media. Protects fuel injectors and ensures optimal fuel flow.",
+  "sold": false
+}
