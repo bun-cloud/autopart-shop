@@ -60,8 +60,8 @@ function initNetlifyIdentity() {
         identityReady = true;
         console.log('✓ Netlify Identity widget ready');
         
-        // Auto-detect site URL
-        const SITE_URL = window.location.origin;
+        // Use hardcoded Netlify site URL
+        const SITE_URL = 'https://druzroadstarshop.netlify.app';
         console.log('Site URL:', SITE_URL);
         
         try {
