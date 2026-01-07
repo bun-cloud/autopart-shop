@@ -28,8 +28,19 @@
                     </svg>
                     Sign in with Netlify Identity
                 </button>
-                <p class="login-info" id="loginInfo" style="display: none;">Checking authentication status...</p>
+                <p class="login-info" id="loginInfo" style="display: none;"></p>
                 <p class="login-error" id="loginError" style="display: none;"></p>
+                
+                <!-- Fallback for mobile/issue troubleshooting -->
+                <div id="authFallback" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Having trouble? Try these options:</p>
+                    <button type="button" class="login-btn" id="manualLoginBtn" style="background: var(--grey-dark); font-size: 0.9rem; padding: 0.75rem 1rem;">
+                        Open Login Modal
+                    </button>
+                    <p style="font-size: 0.75rem; color: var(--grey-medium); margin-top: 0.75rem;">
+                        Or copy your invite link and open it in a different browser.
+                    </p>
+                </div>
             </div>
             <div class="login-footer">
                 <a href="index.html" class="back-to-store">
