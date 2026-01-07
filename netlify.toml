@@ -1,0 +1,31 @@
+[build]
+  publish = "."
+
+[context.production]
+  environment = { }
+
+[context.deploy-preview]
+  environment = { }
+
+[context.branch-deploy]
+  environment = { }
+
+# Redirects for clean URLs
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
+# Netlify Identity callback
+[[redirects]]
+  from = "/admin/auth"
+  to = "/admin/index.html"
+  status = 200
+
+# API proxy for Git Gateway
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.netlify.com/api/v1/:splat"
+  status = 200
+  [redirects.headers]
+    X-Authorization = "*"
