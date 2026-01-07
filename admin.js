@@ -9,45 +9,68 @@
 
 let identityReady = false;
 let identityInitAttempts = 0;
-const MAX_INIT_ATTEMPTS = 20;
+const MAX_INIT_ATTEMPTS = 50;
 
 // Initialize Netlify Identity with proper widget loading
-async function initNetlifyIdentity() {
+function initNetlifyIdentity() {
     showLoginInfo('Initializing authentication...');
     console.log('Starting Netlify Identity initialization...');
     
     // Function to initialize once widget is ready
     const doInit = () => {
         identityInitAttempts++;
-        console.log(`Identity init attempt ${identityInitAttempts}/${MAX_INIT_ATTEMPTS}`);
+        
+        // Log what we have
+        if (typeof netlifyIdentity === 'undefined') {
+            console.log(`Attempt ${identityInitAttempts}: netlifyIdentity is undefined`);
+        } else {
+            console.log(`Attempt ${identityInitAttempts}: netlifyIdentity exists`);
+            console.log('  - typeof init:', typeof netlifyIdentity.init);
+            console.log('  - typeof open:', typeof netlifyIdentity.open);
+            console.log('  - typeof currentUser:', typeof netlifyIdentity.currentUser);
+        }
         
         if (typeof netlifyIdentity === 'undefined') {
             if (identityInitAttempts >= MAX_INIT_ATTEMPTS) {
                 console.error('Netlify Identity failed to load after maximum attempts');
-                showLoginError('Authentication system failed to load. Please refresh the page or check your internet connection.');
+                showLoginError('Authentication system failed to load. Please refresh.');
                 showAuthFallback();
                 return;
             }
-            // Try again in 100ms
-            setTimeout(doInit, 100);
+            // Try again in 200ms
+            setTimeout(doInit, 200);
             return;
         }
         
-        // Widget is loaded, initialize it
+        // Check if init is available
+        if (typeof netlifyIdentity.init !== 'function') {
+            console.log('netlifyIdentity.init is not a function yet');
+            if (identityInitAttempts >= MAX_INIT_ATTEMPTS) {
+                console.error('Netlify Identity init not available after maximum attempts');
+                showLoginError('Authentication system not ready. Please refresh.');
+                showAuthFallback();
+                return;
+            }
+            // Try again in 200ms
+            setTimeout(doInit, 200);
+            return;
+        }
+        
+        // Widget is ready!
         identityReady = true;
-        console.log('Netlify Identity widget loaded successfully');
+        console.log('✓ Netlify Identity widget ready');
         
         // Auto-detect site URL
         const SITE_URL = window.location.origin;
         console.log('Site URL:', SITE_URL);
         
         try {
-            // Configure Identity widget
-            netlifyIdentity.configure({
+            // Initialize Identity widget
+            netlifyIdentity.init({
                 APIUrl: `${SITE_URL}/.netlify/identity`,
                 locale: 'en'
             });
-            console.log('Netlify Identity configured successfully');
+            console.log('✓ Netlify Identity initialized successfully');
         } catch (e) {
             console.error('Error configuring Netlify Identity:', e);
             showLoginError('Error configuring authentication. Please refresh.');
@@ -149,8 +172,8 @@ async function initNetlifyIdentity() {
         }
     };
     
-    // Start initialization
-    doInit();
+    // Start initialization with a small delay to ensure script is parsed
+    setTimeout(doInit, 50);
 }
 
 function handleSuccessfulLogin(user) {
