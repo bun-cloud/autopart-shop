@@ -2,6 +2,20 @@ backend:
   name: git-gateway
   branch: main
 
+# Enable Netlify Identity for authentication
+local_backend:
+  allow_library: true
+
+# Site configuration for Netlify Identity
+site_url: https://druzroadstar.netlify.app
+
+# Authentication settings
+auth_url: '/admin/auth'
+index_route: '/admin/'
+
+# Display settings
+display_url: https://druzroadstar.netlify.app
+
 media_folder: "images"
 public_folder: "/images"
 
