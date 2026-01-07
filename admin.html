@@ -10,11 +10,6 @@
     <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body class="admin-locked" id="adminBody">
-    <!-- Password Protection Overlay (moved inside body) -->
-    <div class="login-overlay" id="loginOverlay">
-        <!-- ... login form code ... -->
-    </div>
-    
     <!-- Password Protection Overlay -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-container">
@@ -47,8 +42,7 @@
             </div>
         </div>
     </div>
-</head>
-<body class="admin-locked" id="adminBody">
+
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
@@ -282,30 +276,20 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>Product Images (Max 20)</label>
-                        <div class="multi-image-upload-area" id="imageUploadArea">
-                            <input type="file" id="productImage" accept="image/*" multiple hidden>
-                            <div class="multi-image-upload-content" id="imageUploadContent">
+                        <label>Product Image</label>
+                        <div class="image-upload-area" id="imageUploadArea">
+                            <input type="file" id="productImage" accept="image/*" hidden>
+                            <div class="image-upload-content" id="imageUploadContent">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                                     <circle cx="8.5" cy="8.5" r="1.5"/>
                                     <polyline points="21 15 16 10 5 21"/>
                                 </svg>
-                                <p>Click or drag images to upload</p>
-                                <span>PNG, JPG up to 20MB each (Max 20 images)</span>
+                                <p>Click or drag image to upload</p>
+                                <span>PNG, JPG up to 5MB</span>
                             </div>
-                            <div class="image-preview-container" id="imagePreviewContainer" style="display: none;">
-                                <div class="image-preview-list" id="imagePreviewList"></div>
-                                <div class="add-more-images" id="addMoreImages">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="12" y1="5" x2="12" y2="19"/>
-                                        <line x1="5" y1="12" x2="19" y2="12"/>
-                                    </svg>
-                                    <span>Add More</span>
-                                </div>
-                            </div>
+                            <img id="imagePreview" style="display: none;">
                         </div>
-                        <input type="hidden" id="productImages" name="productImages">
                     </div>
                     
                     <div class="form-actions">
@@ -380,30 +364,20 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>Product Images (Max 20)</label>
-                        <div class="multi-image-upload-area" id="editImageUploadArea">
-                            <input type="file" id="editProductImage" accept="image/*" multiple hidden>
-                            <div class="multi-image-upload-content" id="editImageUploadContent">
+                        <label>Product Image</label>
+                        <div class="image-upload-area" id="editImageUploadArea">
+                            <input type="file" id="editProductImage" accept="image/*" hidden>
+                            <div class="image-upload-content" id="editImageUploadContent">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                                     <circle cx="8.5" cy="8.5" r="1.5"/>
                                     <polyline points="21 15 16 10 5 21"/>
                                 </svg>
-                                <p>Click or drag images to upload</p>
-                                <span>PNG, JPG up to 20MB each (Max 20 images)</span>
+                                <p>Click or drag image to upload</p>
+                                <span>PNG, JPG up to 5MB</span>
                             </div>
-                            <div class="image-preview-container" id="editImagePreviewContainer" style="display: none;">
-                                <div class="image-preview-list" id="editImagePreviewList"></div>
-                                <div class="add-more-images" id="editAddMoreImages">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="12" y1="5" x2="12" y2="19"/>
-                                        <line x1="5" y1="12" x2="19" y2="12"/>
-                                    </svg>
-                                    <span>Add More</span>
-                                </div>
-                            </div>
+                            <img id="editImagePreview" style="display: none;">
                         </div>
-                        <input type="hidden" id="editProductImages" name="editProductImages">
                     </div>
                     
                     <div class="form-actions">
