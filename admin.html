@@ -151,22 +151,23 @@
                             <path d="M21 21l-4.35-4.35"/>
                         </svg>
                     </div>
-                    <select id="categoryFilter" class="category-filter">
-                        <option value="">All Categories</option>
-                        <option value="Brake System">Brake System</option>
-                        <option value="Filters">Filters</option>
-                        <option value="Engine Parts">Engine Parts</option>
-                        <option value="Electrical">Electrical</option>
-                        <option value="Lighting">Lighting</option>
-                        <option value="Suspension">Suspension</option>
-                    </select>
-                    <button class="btn-danger" id="deleteSelectedBtn" style="display: none;" onclick="deleteSelectedProducts()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;margin-right:8px;">
-                            <polyline points="3 6 5 6 21 6"/>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
-                        Delete Selected (<span id="selectedCount">0</span>)
-                    </button>
+                    <div class="toolbar-actions">
+                        <button class="btn-secondary" id="exportBtn" onclick="exportToCSV()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;margin-right:8px;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Export to Sheets
+                        </button>
+                        <button class="btn-danger" id="deleteSelectedBtn" style="display: none;" onclick="deleteSelectedProducts()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;margin-right:8px;">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            Delete Selected (<span id="selectedCount">0</span>)
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="products-table-container">
@@ -178,10 +179,7 @@
                                 </th>
                                 <th>Image</th>
                                 <th>Product Name</th>
-                                <th>SKU</th>
-                                <th>Category</th>
                                 <th>Price</th>
-                                <th>Stock</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -204,10 +202,6 @@
                         <div class="form-group">
                             <label for="productName">Product Name *</label>
                             <input type="text" id="productName" required placeholder="Enter product name">
-                        </div>
-                        <div class="form-group">
-                            <label for="productSKU">SKU / Part Number *</label>
-                            <input type="text" id="productSKU" required placeholder="e.g., BRK-001">
                         </div>
                     </div>
                     
@@ -244,10 +238,6 @@
                             <label for="productPrice">Price ($) *</label>
                             <input type="number" id="productPrice" required min="0" step="0.01" placeholder="0.00">
                         </div>
-                        <div class="form-group">
-                            <label for="productStock">Quantity *</label>
-                            <input type="number" id="productStock" required min="0" placeholder="0">
-                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -265,12 +255,6 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="productCompatibility">Vehicle Compatibility</label>
-                        <textarea id="productCompatibility" rows="3" placeholder="Enter compatible vehicles (one per line)"></textarea>
-                        <span class="help-text">Enter one vehicle per line, e.g., Toyota Camry 2020-2023</span>
-                    </div>
-                    
-                    <div class="form-group">
                         <label>Product Images (Max 20)</label>
                         <div class="multi-image-upload-area" id="imageUploadArea">
                             <input type="file" id="productImage" accept="image/*" multiple hidden>
@@ -281,7 +265,7 @@
                                     <polyline points="21 15 16 10 5 21"/>
                                 </svg>
                                 <p>Click or drag images to upload</p>
-                                <span>PNG, JPG up to 5MB each (Max 20 images)</span>
+                                <span>PNG, JPG up to 20MB each (Max 20 images)</span>
                             </div>
                             <div class="image-preview-container" id="imagePreviewContainer" style="display: none;">
                                 <div class="image-preview-list" id="imagePreviewList"></div>
@@ -322,10 +306,6 @@
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="editProductSKU">SKU / Part Number *</label>
-                            <input type="text" id="editProductSKU" required>
-                        </div>
-                        <div class="form-group">
                             <label for="editProductCategory">Category *</label>
                             <div class="category-selector">
                                 <input type="text" id="editProductCategory" list="editCategoryList" required placeholder="Select or type new category">
@@ -359,11 +339,6 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="editProductStock">Quantity *</label>
-                        <input type="number" id="editProductStock" required min="0">
-                    </div>
-                    
-                    <div class="form-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="editProductSold">
                             <span class="checkmark"></span>
@@ -378,12 +353,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="editProductCompatibility">Vehicle Compatibility</label>
-                        <textarea id="editProductCompatibility" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Product Images (Max 5)</label>
+                        <label>Product Images (Max 20)</label>
                         <div class="multi-image-upload-area" id="editImageUploadArea">
                             <input type="file" id="editProductImage" accept="image/*" multiple hidden>
                             <div class="multi-image-upload-content" id="editImageUploadContent">
@@ -393,7 +363,7 @@
                                     <polyline points="21 15 16 10 5 21"/>
                                 </svg>
                                 <p>Click or drag images to upload</p>
-                                <span>PNG, JPG up to 5MB each (Max 20 images)</span>
+                                <span>PNG, JPG up to 20MB each (Max 20 images)</span>
                             </div>
                             <div class="image-preview-container" id="editImagePreviewContainer" style="display: none;">
                                 <div class="image-preview-list" id="editImagePreviewList"></div>

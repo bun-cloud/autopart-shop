@@ -28,22 +28,18 @@ function validateInventoryConsistency() {
         if (!product.id) issues.push(`Product at index ${index} missing ID`);
         if (!product.name) issues.push(`Product ID ${product.id} missing name`);
         if (typeof product.price !== 'number') issues.push(`Product ID ${product.id} has invalid price`);
-        if (typeof product.stock !== 'number') issues.push(`Product ID ${product.id} has invalid stock`);
     });
     
-    // Check for negative stock values
+    // Check for negative values
     inventory.forEach(product => {
-        if (product.stock < 0) {
-            issues.push(`Product ID ${product.id} has negative stock: ${product.stock}`);
-        }
+        // Removed stock check as stock field has been removed
     });
     
     // Calculate total inventory value
-    const totalValue = inventory.reduce((sum, p) => sum + (p.price * p.stock), 0);
-    const totalStock = inventory.reduce((sum, p) => sum + p.stock, 0);
+    const totalValue = inventory.reduce((sum, p) => sum + p.price, 0);
     
     console.log(`\nInventory Statistics:`);
-    console.log(`- Total stock units: ${totalStock}`);
+    console.log(`- Total products: ${inventory.length}`);
     console.log(`- Total inventory value: $${totalValue.toFixed(2)}`);
     console.log(`- Average price: $${(totalValue / inventory.length).toFixed(2)}`);
     

@@ -1,6 +1,6 @@
 /**
  * druzroadstar shop - Admin Inventory Management
- * Features: Product CRUD, image upload, stock management
+ * Features: Product CRUD, image upload
  */
 
 // ========================================
@@ -95,36 +95,27 @@ const defaultInventory = [
         id: 1,
         name: "Premium Ceramic Brake Pad Set",
         category: "Brake System",
-        partNumber: "BRK-CER-001",
         price: 45.99,
         brand: "Brembo",
-        stock: 48,
         images: [generatePlaceholderImage("Brake Pads")],
-        compatibility: ["Toyota Camry 2020-2023", "Honda Accord 2019-2022", "Nissan Altima 2020-2023"],
         description: "High-performance ceramic brake pads designed for superior stopping power and reduced noise. Features low dust formulation for cleaner wheels."
     },
     {
         id: 2,
         name: "Vented Brake Disc Kit",
         category: "Brake System",
-        partNumber: "BRK-DSC-002",
         price: 129.99,
         brand: "Brembo",
-        stock: 32,
         images: [generatePlaceholderImage("Brake Disc")],
-        compatibility: ["Ford Mustang 2018-2023", "Chevrolet Camaro 2020-2023", "Dodge Challenger 2020-2023"],
         description: "Precision-machined vented brake discs with superior heat dissipation. Drilled and slotted design for improved braking performance in all conditions."
     },
     {
         id: 3,
         name: "Performance Brake Caliper",
         category: "Brake System",
-        partNumber: "BRK-CAL-003",
         price: 89.99,
         brand: "Monroe",
-        stock: 24,
         images: [generatePlaceholderImage("Caliper")],
-        compatibility: ["Toyota Camry 2020-2023", "Honda Accord 2019-2022", "Subaru Legacy 2020-2023"],
         description: "Premium brake caliper with stainless steel pistons. Features anti-rust coating and comes complete with mounting hardware."
     },
     
@@ -133,36 +124,27 @@ const defaultInventory = [
         id: 4,
         name: "Premium Oil Filter",
         category: "Filters",
-        partNumber: "FIL-OIL-001",
         price: 12.99,
         brand: "Bosch",
-        stock: 150,
         images: [generatePlaceholderImage("Oil Filter")],
-        compatibility: ["Universal Fit - Check Vehicle"],
         description: "High-capacity oil filter with premium filtration media. Traps contaminants effectively and ensures optimal engine protection."
     },
     {
         id: 5,
         name: "Cabin Air Filter with Activated Carbon",
         category: "Filters",
-        partNumber: "FIL-CAB-002",
         price: 24.99,
         brand: "Bosch",
-        stock: 85,
         images: [generatePlaceholderImage("Cabin Filter")],
-        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Ford Fusion 2019-2020"],
         description: "Multi-layer cabin air filter with activated carbon technology. Removes allergens, dust, and odors for cleaner cabin air."
     },
     {
         id: 6,
         name: "High-Performance Air Intake Filter",
         category: "Filters",
-        partNumber: "FIL-AIR-003",
         price: 34.99,
         brand: "K&N",
-        stock: 62,
         images: [generatePlaceholderImage("Air Filter")],
-        compatibility: ["Ford Mustang 2018-2023", "Chevrolet Camaro 2020-2023", "BMW 3 Series 2019-2023"],
         description: "Washable and reusable high-flow air filter. Provides improved airflow and engine protection. Lifetime warranty included."
     },
     
@@ -171,36 +153,27 @@ const defaultInventory = [
         id: 7,
         name: "Iridium Spark Plug Set (4-Pack)",
         category: "Engine Parts",
-        partNumber: "ENG-SPK-001",
         price: 39.99,
         brand: "NGK",
-        stock: 120,
         images: [generatePlaceholderImage("Spark Plugs")],
-        compatibility: ["Toyota Camry 2020-2023", "Honda Civic 2019-2023", "Ford Escape 2020-2022"],
         description: "Premium iridium spark plugs with trivalent metal plating. Provides excellent ignitability and extended service life up to 100,000 miles."
     },
     {
         id: 8,
         name: "Timing Belt Kit with Water Pump",
         category: "Engine Parts",
-        partNumber: "ENG-TIM-002",
         price: 149.99,
         brand: "Gates",
-        stock: 28,
         images: [generatePlaceholderImage("Timing Belt")],
-        compatibility: ["Toyota Camry 2015-2017", "Honda Accord 2014-2017", "Nissan Rogue 2017-2020"],
         description: "Complete timing belt kit including tensioner, idler pulleys, and water pump. Designed for reliable performance and peace of mind."
     },
     {
         id: 9,
         name: "High-Volume Oil Pump",
         category: "Engine Parts",
-        partNumber: "ENG-OIL-003",
         price: 79.99,
         brand: "Melling",
-        stock: 18,
         images: [generatePlaceholderImage("Oil Pump")],
-        compatibility: ["Ford Mustang 2018-2023", "Chevrolet Silverado 2019-2023", "GM Vehicles V8"],
         description: "High-performance oil pump with increased flow rate. Features precision-machined components for reliable lubrication."
     },
     
@@ -209,36 +182,27 @@ const defaultInventory = [
         id: 10,
         name: "Premium AGM Car Battery",
         category: "Electrical",
-        partNumber: "ELC-BAT-001",
         price: 199.99,
         brand: "DieHard",
-        stock: 35,
         images: [generatePlaceholderImage("Battery")],
-        compatibility: ["Universal - Group Size 24/24F"],
         description: "Absorbent Glass Mat (AGM) technology battery with 3-year free replacement warranty. Superior starting power and vibration resistance."
     },
     {
         id: 11,
         name: "Alternator - 160 Amp High Output",
         category: "Electrical",
-        partNumber: "ELC-ALT-002",
         price: 189.99,
         brand: "Denso",
-        stock: 22,
         images: [generatePlaceholderImage("Alternator")],
-        compatibility: ["Ford F-150 2018-2023", "Ford Expedition 2018-2023", "Lincoln Navigator 2018-2023"],
         description: "High-output 160 amp alternator for increased electrical demand vehicles. Features premium bearings and voltage regulation."
     },
     {
         id: 12,
         name: "LED Headlight Conversion Kit",
         category: "Electrical",
-        partNumber: "ELC-LED-003",
         price: 89.99,
         brand: "Philips",
-        stock: 45,
         images: [generatePlaceholderImage("LED Lights")],
-        compatibility: ["H11 Bulb Type", "9005 Bulb Type", "9006 Bulb Type"],
         description: "Plug-and-play LED conversion kit with 12,000 lumens output. Features integrated cooling fan and 50,000 hour lifespan."
     },
     
@@ -247,36 +211,27 @@ const defaultInventory = [
         id: 13,
         name: "Halogen Headlight Bulb - H11",
         category: "Lighting",
-        partNumber: "LGT-HAL-001",
         price: 24.99,
         brand: "Philips",
-        stock: 95,
         images: [generatePlaceholderImage("Headlight")],
-        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Nissan Altima 2019-2023"],
         description: "Premium halogen headlight bulb with up to 150% brighter light. CO+Blue coating for improved visibility and style."
     },
     {
         id: 14,
         name: "LED Tail Light Assembly",
         category: "Lighting",
-        partNumber: "LGT-LED-002",
         price: 159.99,
         brand: "Philips",
-        stock: 28,
         images: [generatePlaceholderImage("Tail Light")],
-        compatibility: ["Ford Mustang 2018-2023", "Chevrolet Camaro 2020-2023", "Dodge Challenger 2020-2023"],
         description: "LED tail light assembly with sequential turn signals. Direct bolt-on replacement with premium finish."
     },
     {
         id: 15,
         name: "Fog Light Kit - LED",
         category: "Lighting",
-        partNumber: "LGT-FOG-003",
         price: 69.99,
         brand: "PIAA",
-        stock: 42,
         images: [generatePlaceholderImage("Fog Light")],
-        compatibility: ["Universal Fit - 3 Inch Round", "Toyota Tacoma 2016-2023", "Jeep Wrangler 2018-2023"],
         description: "High-performance LED fog lights with yellow or white options. Impact-resistant polycarbonate lens."
     },
     
@@ -285,36 +240,27 @@ const defaultInventory = [
         id: 16,
         name: "Performance Strut Assembly",
         category: "Suspension",
-        partNumber: "SUS-STR-001",
         price: 189.99,
         brand: "Monroe",
-        stock: 32,
         images: [generatePlaceholderImage("Strut")],
-        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Nissan Altima 2019-2023"],
         description: "Complete strut assembly with spring and mount. Designed for improved handling and ride comfort. Pre-assembled for easy installation."
     },
     {
         id: 17,
         name: "Sway Bar Link Kit",
         category: "Suspension",
-        partNumber: "SUS-SWY-002",
         price: 54.99,
         brand: "Moog",
-        stock: 65,
         images: [generatePlaceholderImage("Sway Link")],
-        compatibility: ["Ford F-150 2018-2023", "Ford Expedition 2018-2023", "Lincoln Navigator 2018-2023"],
         description: "Premium sway bar link kit with greasable joints. Features corrosion-resistant hardware and precise fitment."
     },
     {
         id: 18,
         name: "Shock Absorber Set",
         category: "Suspension",
-        partNumber: "SUS-SHK-003",
         price: 129.99,
         brand: "KYB",
-        stock: 38,
         images: [generatePlaceholderImage("Shocks")],
-        compatibility: ["Honda Civic 2016-2023", "Toyota Corolla 2019-2023", "Mazda3 2019-2023"],
         description: "Pair of premium shock absorbers with gas charge technology. Provides consistent damping and improved stability."
     },
     
@@ -323,84 +269,63 @@ const defaultInventory = [
         id: 19,
         name: "Ceramic Brake Disc Pad Set",
         category: "Brake System",
-        partNumber: "BRK-KIT-004",
         price: 79.99,
         brand: "Bosch",
-        stock: 55,
         images: [generatePlaceholderImage("Brake Kit")],
-        compatibility: ["BMW 3 Series 2019-2023", "Mercedes C-Class 2020-2023", "Audi A4 2020-2023"],
         description: "Complete brake pad and rotor kit with hardware. Premium ceramic formula for low dust and quiet operation."
     },
     {
         id: 20,
         name: "Fuel Filter",
         category: "Filters",
-        partNumber: "FIL-FUEL-004",
         price: 18.99,
         brand: "Bosch",
-        stock: 78,
         images: [generatePlaceholderImage("Fuel Filter")],
-        compatibility: ["Ford F-150 2018-2023", "Ford Explorer 2020-2023", "Lincoln Aviator 2020-2023"],
         description: "High-efficiency fuel filter with premium filtration media. Protects fuel injectors and ensures optimal fuel flow."
     },
     {
         id: 21,
         name: "Ignition Coil Pack",
         category: "Engine Parts",
-        partNumber: "ENG-IGN-004",
         price: 109.99,
         brand: "NGK",
-        stock: 42,
         images: [generatePlaceholderImage("Ignition Coil")],
-        compatibility: ["Toyota Camry 2020-2023", "Honda Accord 2019-2022", "Lexus ES 2020-2023"],
         description: "Premium ignition coil pack with OE-matched design. Provides reliable spark for improved combustion and fuel economy."
     },
     {
         id: 22,
         name: "Power Steering Pump",
         category: "Engine Parts",
-        partNumber: "ENG-STR-005",
         price: 149.99,
         brand: "Cardone",
-        stock: 25,
         images: [generatePlaceholderImage("Power Pump")],
-        compatibility: ["Chevrolet Silverado 2019-2023", "GMC Sierra 2019-2023", "Ram 1500 2019-2023"],
         description: "Remanufactured power steering pump with premium seals. Includes reservoir where applicable for complete replacement."
     },
     {
         id: 23,
         name: "Starter Motor - High Torque",
         category: "Electrical",
-        partNumber: "ELC-STR-004",
         price: 169.99,
         brand: "Denso",
-        stock: 30,
         images: [generatePlaceholderImage("Starter")],
-        compatibility: ["Ford F-150 2018-2023", "Ford Mustang 2018-2023", "Ford Expedition 2018-2023"],
         description: "High-torque starter motor for reliable starting in all conditions. Features premium bearings and solenoid."
     },
     {
         id: 24,
         name: "Control Arm Kit",
         category: "Suspension",
-        partNumber: "SUS-CTL-004",
         price: 199.99,
         brand: "Moog",
-        stock: 22,
         images: [generatePlaceholderImage("Control Arm")],
-        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Lexus ES 2020-2023"],
         description: "Complete control arm kit with ball joint and bushings. Precision-engineered for improved steering response and alignment."
     },
     {
         id: 25,
         name: "Wheel Hub Assembly",
         category: "Suspension",
-        partNumber: "SUS-WHL-005",
         price: 119.99,
         brand: "Moog",
-        stock: 36,
         images: [generatePlaceholderImage("Hub Assembly")],
-        compatibility: ["Toyota Camry 2018-2023", "Honda Accord 2018-2022", "Nissan Altima 2019-2023"],
         description: "Premium wheel hub assembly with integrated ABS sensor. Pre-adjusted bearings and seals for easy installation."
     }
 ];
@@ -684,7 +609,7 @@ window.deleteCategory = deleteCategory;
 function updateDashboard() {
     // Calculate stats
     const totalProducts = inventory.length;
-    const totalValue = inventory.reduce((sum, p) => sum + (p.price * p.stock), 0);
+    const totalValue = inventory.reduce((sum, p) => sum + p.price, 0);
     
     // Update stat cards
     document.getElementById('totalProducts').textContent = totalProducts;
@@ -713,7 +638,7 @@ function renderProductsTable(products = inventory) {
     if (products.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
                     No products found
                 </td>
             </tr>
@@ -728,12 +653,7 @@ function renderProductsTable(products = inventory) {
             </td>
             <td><img src="${product.images[0]}" alt="${product.name}"></td>
             <td><strong>${product.name}</strong></td>
-            <td><code>${product.partNumber}</code></td>
-            <td>${product.category}</td>
             <td class="price">$${product.price.toFixed(2)}</td>
-            <td class="stock ${product.stock === 0 ? 'out-of-stock' : product.stock <= 10 ? 'low-stock' : ''}">
-                ${product.stock}
-            </td>
             <td>
                 <div class="action-buttons">
                     <button class="action-btn" onclick="editProduct(${product.id})" title="Edit">
@@ -818,17 +738,11 @@ function handleProductSubmit(e) {
     const product = {
         id: Date.now(),
         name: document.getElementById('productName').value.trim(),
-        partNumber: document.getElementById('productSKU').value.trim().toUpperCase(),
         category: document.getElementById('productCategory').value,
         brand: document.getElementById('productBrand').value.trim(),
         price: parseFloat(document.getElementById('productPrice').value),
-        stock: parseInt(document.getElementById('productStock').value),
         sold: document.getElementById('productSold').checked,
         description: document.getElementById('productDescription').value.trim(),
-        compatibility: document.getElementById('productCompatibility').value
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0),
         images: tempImages.length > 0 ? [...tempImages] : [generatePlaceholderImage("Product")]
     };
     
@@ -853,14 +767,11 @@ function editProduct(id) {
     
     document.getElementById('editProductId').value = product.id;
     document.getElementById('editProductName').value = product.name;
-    document.getElementById('editProductSKU').value = product.partNumber;
     document.getElementById('editProductCategory').value = product.category;
     document.getElementById('editProductBrand').value = product.brand;
     document.getElementById('editProductPrice').value = product.price;
-    document.getElementById('editProductStock').value = product.stock;
     document.getElementById('editProductSold').checked = product.sold || false;
     document.getElementById('editProductDescription').value = product.description;
-    document.getElementById('editProductCompatibility').value = product.compatibility.join('\n');
     
     // Load product images
     loadProductImages(product.images || [product.image], 'edit');
@@ -883,17 +794,11 @@ function handleEditSubmit(e) {
     inventory[index] = {
         ...inventory[index],
         name: document.getElementById('editProductName').value.trim(),
-        partNumber: document.getElementById('editProductSKU').value.trim().toUpperCase(),
         category: document.getElementById('editProductCategory').value,
         brand: document.getElementById('editProductBrand').value.trim(),
         price: parseFloat(document.getElementById('editProductPrice').value),
-        stock: parseInt(document.getElementById('editProductStock').value),
         sold: document.getElementById('editProductSold').checked,
         description: document.getElementById('editProductDescription').value.trim(),
-        compatibility: document.getElementById('editProductCompatibility').value
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0),
         images: editTempImages.length > 0 ? [...editTempImages] : inventory[index].images
     };
     
@@ -1126,14 +1031,13 @@ function setupSearchAndFilter() {
     
     function filterProducts() {
         const searchTerm = searchInput.value.toLowerCase().trim();
-        const category = categoryFilter.value;
+        const category = categoryFilter ? categoryFilter.value : '';
         
         let filtered = inventory;
         
         if (searchTerm) {
             filtered = filtered.filter(product =>
                 product.name.toLowerCase().includes(searchTerm) ||
-                product.partNumber.toLowerCase().includes(searchTerm) ||
                 product.brand.toLowerCase().includes(searchTerm) ||
                 product.description.toLowerCase().includes(searchTerm)
             );
@@ -1147,7 +1051,55 @@ function setupSearchAndFilter() {
     }
     
     searchInput.addEventListener('input', filterProducts);
-    categoryFilter.addEventListener('change', filterProducts);
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', filterProducts);
+    }
+}
+
+// ========================================
+// EXPORT TO CSV (GOOGLE SHEETS)
+// ========================================
+function exportToCSV() {
+    // Get current inventory
+    const stored = localStorage.getItem('inventory_db');
+    const inventory = stored ? JSON.parse(stored) : [...defaultInventory];
+    
+    if (inventory.length === 0) {
+        showToast('No products to export');
+        return;
+    }
+    
+    // Define CSV headers - only ID, Name, and Price
+    const headers = ['Product ID', 'Product Name', 'Price'];
+    
+    // Create CSV content
+    let csvContent = headers.join(',') + '\n';
+    
+    inventory.forEach(product => {
+        const row = [
+            product.id,
+            `"${product.name.replace(/"/g, '""')}"`,
+            product.price
+        ];
+        csvContent += row.join(',') + '\n';
+    });
+    
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    // Generate filename with date
+    const date = new Date().toISOString().split('T')[0];
+    link.setAttribute('href', url);
+    link.setAttribute('download', `inventory_export_${date}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast(`Exported ${inventory.length} products to CSV`);
 }
 
 // ========================================
@@ -1226,3 +1178,4 @@ window.closeDeleteModal = closeDeleteModal;
 window.confirmDelete = confirmDelete;
 window.resetForm = resetForm;
 window.resetDatabase = resetDatabase;
+window.exportToCSV = exportToCSV;
