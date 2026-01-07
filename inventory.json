@@ -1,0 +1,204 @@
+[
+  {
+    "id": 1,
+    "name": "Premium Ceramic Brake Pad Set",
+    "category": "Brake System",
+    "price": 45.99,
+    "brand": "Brembo",
+    "description": "High-performance ceramic brake pads designed for superior stopping power and reduced noise. Features low dust formulation for cleaner wheels."
+  },
+  {
+    "id": 2,
+    "name": "Vented Brake Disc Kit",
+    "category": "Brake System",
+    "price": 129.99,
+    "brand": "Brembo",
+    "description": "Precision-machined vented brake discs with superior heat dissipation. Drilled and slotted design for improved braking performance in all conditions."
+  },
+  {
+    "id": 3,
+    "name": "Performance Brake Caliper",
+    "category": "Brake System",
+    "price": 89.99,
+    "brand": "Monroe",
+    "description": "Premium brake caliper with stainless steel pistons. Features anti-rust coating and comes complete with mounting hardware."
+  },
+  {
+    "id": 4,
+    "name": "Premium Oil Filter",
+    "category": "Filters",
+    "price": 12.99,
+    "brand": "Bosch",
+    "description": "High-capacity oil filter with premium filtration media. Traps contaminants effectively and ensures optimal engine protection."
+  },
+  {
+    "id": 5,
+    "name": "Cabin Air Filter with Activated Carbon",
+    "category": "Filters",
+    "price": 24.99,
+    "brand": "Bosch",
+    "description": "Multi-layer cabin air filter with activated carbon technology. Removes allergens, dust, and odors for cleaner cabin air."
+  },
+  {
+    "id": 6,
+    "name": "High-Performance Air Intake Filter",
+    "category": "Filters",
+    "price": 34.99,
+    "brand": "K&N",
+    "description": "Washable and reusable high-flow air filter. Provides improved airflow and engine protection. Lifetime warranty included."
+  },
+  {
+    "id": 7,
+    "name": "Iridium Spark Plug Set (4-Pack)",
+    "category": "Engine Parts",
+    "price": 39.99,
+    "brand": "NGK",
+    "description": "Premium iridium spark plugs with trivalent metal plating. Provides excellent ignitability and extended service life up to 100,000 miles."
+  },
+  {
+    "id": 8,
+    "name": "Timing Belt Kit with Water Pump",
+    "category": "Engine Parts",
+    "price": 149.99,
+    "brand": "Gates",
+    "partNumber": "ENG-TIM-002",
+    "description": "Complete timing belt kit including tensioner, idler pulleys, and water pump. Designed for reliable performance and peace of mind."
+  },
+  {
+    "id": 9,
+    "name": "High-Volume Oil Pump",
+    "category": "Engine Parts",
+    "price": 79.99,
+    "brand": "Melling",
+    "description": "High-performance oil pump with increased flow rate. Features precision-machined components for reliable lubrication."
+  },
+  {
+    "id": 10,
+    "name": "Premium AGM Car Battery",
+    "category": "Electrical",
+    "price": 199.99,
+    "brand": "DieHard",
+    "description": "Absorbent Glass Mat (AGM) technology battery with 3-year free replacement warranty. Superior starting power and vibration resistance."
+  },
+  {
+    "id": 11,
+    "name": "Alternator - 160 Amp High Output",
+    "category": "Electrical",
+    "price": 189.99,
+    "brand": "Denso",
+    "description": "High-output 160 amp alternator for increased electrical demand vehicles. Features premium bearings and voltage regulation."
+  },
+  {
+    "id": 12,
+    "name": "LED Headlight Conversion Kit",
+    "category": "Electrical",
+    "price": 89.99,
+    "brand": "Philips",
+    "description": "Plug-and-play LED conversion kit with 12,000 lumens output. Features integrated cooling fan and 50,000 hour lifespan."
+  },
+  {
+    "id": 13,
+    "name": "Halogen Headlight Bulb - H11",
+    "category": "Lighting",
+    "price": 24.99,
+    "brand": "Philips",
+    "description": "Premium halogen headlight bulb with up to 150% brighter light. CO+Blue coating for improved visibility and style."
+  },
+  {
+    "id": 14,
+    "name": "LED Tail Light Assembly",
+    "category": "Lighting",
+    "price": 159.99,
+    "brand": "Philips",
+    "description": "LED tail light assembly with sequential turn signals. Direct bolt-on replacement with premium finish."
+  },
+  {
+    "id": 15,
+    "name": "Fog Light Kit - LED",
+    "category": "Lighting",
+    "price": 69.99,
+    "brand": "PIAA",
+    "description": "High-performance LED fog lights with yellow or white options. Impact-resistant polycarbonate lens."
+  },
+  {
+    "id": 16,
+    "name": "Performance Strut Assembly",
+    "category": "Suspension",
+    "price": 189.99,
+    "brand": "Monroe",
+    "partNumber": "SUS-STR-001",
+    "description": "Complete strut assembly with spring and mount. Designed for improved handling and ride comfort. Pre-assembled for easy installation."
+  },
+  {
+    "id": 17,
+    "name": "Sway Bar Link Kit",
+    "category": "Suspension",
+    "price": 54.99,
+    "brand": "Moog",
+    "description": "Premium sway bar link kit with greasable joints. Features corrosion-resistant hardware and precise fitment."
+  },
+  {
+    "id": 18,
+    "name": "Shock Absorber Set",
+    "category": "Suspension",
+    "price": 129.99,
+    "brand": "KYB",
+    "description": "Pair of premium shock absorbers with gas charge technology. Provides consistent damping and improved stability."
+  },
+  {
+    "id": 19,
+    "name": "Ceramic Brake Disc Pad Set",
+    "category": "Brake System",
+    "price": 79.99,
+    "brand": "Bosch",
+    "description": "Complete brake pad and rotor kit with hardware. Premium ceramic formula for low dust and quiet operation."
+  },
+  {
+    "id": 20,
+    "name": "Fuel Filter",
+    "category": "Filters",
+    "price": 18.99,
+    "brand": "Bosch",
+    "description": "High-efficiency fuel filter with premium filtration media. Protects fuel injectors and ensures optimal fuel flow."
+  },
+  {
+    "id": 21,
+    "name": "Ignition Coil Pack",
+    "category": "Engine Parts",
+    "price": 109.99,
+    "brand": "NGK",
+    "description": "Premium ignition coil pack with OE-matched design. Provides reliable spark for improved combustion and fuel economy."
+  },
+  {
+    "id": 22,
+    "name": "Power Steering Pump",
+    "category": "Engine Parts",
+    "price": 149.99,
+    "brand": "Cardone",
+    "description": "Remanufactured power steering pump with premium seals. Includes reservoir where applicable for complete replacement."
+  },
+  {
+    "id": 23,
+    "name": "Starter Motor - High Torque",
+    "category": "Electrical",
+    "price": 169.99,
+    "brand": "Denso",
+    "description": "High-torque starter motor for reliable starting in all conditions. Features premium bearings and solenoid."
+  },
+  {
+    "id": 24,
+    "name": "Control Arm Kit",
+    "category": "Suspension",
+    "price": 199.99,
+    "brand": "Moog",
+    "description": "Complete control arm kit with ball joint and bushings. Precision-engineered for improved steering response and alignment."
+  },
+  {
+    "id": 25,
+    "name": "Wheel Hub Assembly",
+    "category": "Suspension",
+    "price": 119.99,
+    "brand": "Moog",
+    "description": "Premium wheel hub assembly with integrated ABS sensor. Pre-adjusted bearings and seals for easy installation."
+  }
+]
