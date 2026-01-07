@@ -1,0 +1,22 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images"
+public_folder: "/images"
+
+collections:
+  - name: "products"
+    label: "Products"
+    folder: "products"
+    create: true
+    slug: "{{id}}"
+    fields:
+      - {label: "Product ID", name: "id", widget: "number"}
+      - {label: "Product Name", name: "name", widget: "string"}
+      - {label: "Category", name: "category", widget: "select", options: ["Brake System", "Filters", "Engine Parts", "Electrical", "Lighting", "Suspension"]}
+      - {label: "Price", name: "price", widget: "number", value_type: "float", step: 0.01}
+      - {label: "Brand", name: "brand", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Part Number (Optional)", name: "partNumber", widget: "string", required: false}
+      - {label: "Sold", name: "sold", widget: "boolean", default: false}
