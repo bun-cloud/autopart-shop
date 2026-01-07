@@ -8,7 +8,7 @@
 // ========================================
 
 // Hardcoded password - CHANGE THIS TO YOUR OWN PASSWORD
-const ADMIN_PASSWORD = 'admin123';
+const ADMIN_PASSWORD = 'L0ver262!!GI';
 
 // Initialize password authentication on page load
 function initAuth() {
