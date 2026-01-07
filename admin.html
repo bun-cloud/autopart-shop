@@ -8,25 +8,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
     
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
     <!-- Password Protection Overlay -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-container">
             <div class="login-header">
                 <img src="logo.png" alt="Logo" class="login-logo">
                 <h2>Admin Panel</h2>
-                <p>Please enter the password to access</p>
+                <p id="loginSubtitle">Sign in with Netlify Identity</p>
             </div>
-            <form class="login-form" id="loginForm">
-                <div class="login-input-group">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <div class="login-form" id="loginForm">
+                <button type="button" class="login-btn" id="netlifyLoginBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;margin-right:10px;">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
                     </svg>
-                    <input type="password" id="adminPassword" placeholder="Enter password" required>
-                </div>
-                <button type="submit" class="login-btn">Access Admin Panel</button>
-                <p class="login-error" id="loginError" style="display: none;">Incorrect password. Please try again.</p>
-            </form>
+                    Sign in with Netlify Identity
+                </button>
+                <p class="login-info" id="loginInfo" style="display: none;">Checking authentication status...</p>
+                <p class="login-error" id="loginError" style="display: none;"></p>
+            </div>
             <div class="login-footer">
                 <a href="index.html" class="back-to-store">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -70,6 +74,13 @@
                         <line x1="8" y1="12" x2="16" y2="12"/>
                     </svg>
                     Add Product
+                </a>
+                <a href="/admin/" class="admin-nav-link" target="_blank">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    CMS Editor
                 </a>
                 <a href="index.html" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -127,6 +138,17 @@
                 </div>
 
                 <div class="dashboard-sections">
+                    <div class="dashboard-section">
+                        <h3>CMS Editor</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            Use the <strong>CMS Editor</strong> link in the sidebar to manage your products through a visual editor.
+                            Changes are saved to GitHub and automatically deployed to your site.
+                        </p>
+                        <a href="/admin/" class="btn-primary" style="display: inline-block; text-decoration: none;" target="_blank">
+                            Open CMS Editor
+                        </a>
+                    </div>
+                    
                     <div class="dashboard-section">
                         <h3>Recent Products</h3>
                         <div class="recent-products" id="recentProducts">
