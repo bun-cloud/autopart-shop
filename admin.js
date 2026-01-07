@@ -7,63 +7,150 @@
 // NETLIFY IDENTITY AUTHENTICATION
 // ========================================
 
-// Initialize Netlify Identity
-function initNetlifyIdentity() {
-    if (typeof netlifyIdentity === 'undefined') {
-        console.warn('Netlify Identity widget not loaded');
-        showLoginError('Authentication system not available. Please refresh the page.');
-        return;
-    }
+let identityReady = false;
+let identityInitAttempts = 0;
+const MAX_INIT_ATTEMPTS = 20;
 
-    // Configure Identity widget
-    netlifyIdentity.configure({
-        container: 'loginOverlay',
-        locale: 'en'
-    });
-
-    // Handle login button click
-    const loginBtn = document.getElementById('netlifyLoginBtn');
-    if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-            netlifyIdentity.open();
+// Initialize Netlify Identity with proper widget loading
+async function initNetlifyIdentity() {
+    showLoginInfo('Initializing authentication...');
+    console.log('Starting Netlify Identity initialization...');
+    
+    // Function to initialize once widget is ready
+    const doInit = () => {
+        identityInitAttempts++;
+        console.log(`Identity init attempt ${identityInitAttempts}/${MAX_INIT_ATTEMPTS}`);
+        
+        if (typeof netlifyIdentity === 'undefined') {
+            if (identityInitAttempts >= MAX_INIT_ATTEMPTS) {
+                console.error('Netlify Identity failed to load after maximum attempts');
+                showLoginError('Authentication system failed to load. Please refresh the page or check your internet connection.');
+                showAuthFallback();
+                return;
+            }
+            // Try again in 100ms
+            setTimeout(doInit, 100);
+            return;
+        }
+        
+        // Widget is loaded, initialize it
+        identityReady = true;
+        console.log('Netlify Identity widget loaded successfully');
+        
+        // Auto-detect site URL
+        const SITE_URL = window.location.origin;
+        console.log('Site URL:', SITE_URL);
+        
+        try {
+            // Configure Identity widget
+            netlifyIdentity.configure({
+                APIUrl: `${SITE_URL}/.netlify/identity`,
+                locale: 'en'
+            });
+            console.log('Netlify Identity configured successfully');
+        } catch (e) {
+            console.error('Error configuring Netlify Identity:', e);
+            showLoginError('Error configuring authentication. Please refresh.');
+            return;
+        }
+        
+        // Handle login button click
+        const loginBtn = document.getElementById('netlifyLoginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                console.log('Login button clicked');
+                netlifyIdentity.open();
+            });
+        }
+        
+        // Handle manual login button (fallback for mobile)
+        const manualLoginBtn = document.getElementById('manualLoginBtn');
+        if (manualLoginBtn) {
+            manualLoginBtn.addEventListener('click', () => {
+                console.log('Manual login button clicked');
+                netlifyIdentity.open();
+            });
+        }
+        
+        // Listen for init event
+        netlifyIdentity.on('init', (user) => {
+            console.log('Identity initialized', user ? `User: ${user.email}` : 'No user');
         });
-    }
-
-    // Listen for login events
-    netlifyIdentity.on('login', (user) => {
-        console.log('User logged in:', user.email);
-        localStorage.setItem('adminUser', JSON.stringify({
-            email: user.email,
-            id: user.id,
-            token: user.token,
-            loggedInAt: new Date().toISOString()
-        }));
-        netlifyIdentity.close();
-        showAdminPanel();
-        showToast(`Welcome, ${user.email}!`);
-    });
-
-    // Listen for logout events
-    netlifyIdentity.on('logout', () => {
-        console.log('User logged out');
-        localStorage.removeItem('adminUser');
-        showLoginScreen();
-        showToast('You have been logged out');
-    });
-
-    // Listen for errors
-    netlifyIdentity.on('error', (err) => {
-        console.error('Identity error:', err);
-        showLoginError('Authentication error. Please try again.');
-    });
-
-    // Check if user is already logged in
-    const currentUser = netlifyIdentity.currentUser();
-    if (currentUser) {
-        handleSuccessfulLogin(currentUser);
-    } else {
-        showLoginScreen();
-    }
+        
+        // Listen for login events
+        netlifyIdentity.on('login', (user) => {
+            console.log('Login success:', user.email);
+            localStorage.setItem('adminUser', JSON.stringify({
+                email: user.email,
+                id: user.id,
+                token: user.token,
+                loggedInAt: new Date().toISOString()
+            }));
+            netlifyIdentity.close();
+            showAdminPanel();
+            showToast(`Welcome, ${user.email}!`);
+        });
+        
+        // Listen for signup events (for invite acceptance)
+        netlifyIdentity.on('signup', (user) => {
+            console.log('Signup success:', user.email);
+            localStorage.setItem('adminUser', JSON.stringify({
+                email: user.email,
+                id: user.id,
+                token: user.token,
+                loggedInAt: new Date().toISOString()
+            }));
+            netlifyIdentity.close();
+            showAdminPanel();
+            showToast(`Account created! Welcome, ${user.email}!`);
+        });
+        
+        // Listen for logout events
+        netlifyIdentity.on('logout', () => {
+            console.log('User logged out');
+            localStorage.removeItem('adminUser');
+            showLoginScreen();
+            showToast('You have been logged out');
+        });
+        
+        // Listen for errors
+        netlifyIdentity.on('error', (err) => {
+            console.error('Identity error:', err);
+            showLoginError(`Authentication error: ${err.message || 'Unknown error'}`);
+            showAuthFallback();
+        });
+        
+        // Check URL for invite token
+        const hash = window.location.hash;
+        console.log('Current URL hash:', hash);
+        
+        if (hash && (hash.includes('invite_token') || hash.includes('confirmation_token'))) {
+            // User is clicking an invite link
+            console.log('Invite token detected in URL');
+            showLoginInfo('Processing invitation...');
+            showAuthFallback();
+            
+            // Try to open the signup modal automatically
+            setTimeout(() => {
+                try {
+                    netlifyIdentity.open('signup');
+                } catch (e) {
+                    console.warn('Could not auto-open signup modal:', e);
+                }
+            }, 500);
+        }
+        
+        // Check if user is already logged in
+        const currentUser = netlifyIdentity.currentUser();
+        if (currentUser) {
+            handleSuccessfulLogin(currentUser);
+        } else {
+            showLoginScreen();
+        }
+    };
+    
+    // Start initialization
+    doInit();
 }
 
 function handleSuccessfulLogin(user) {
@@ -108,6 +195,7 @@ function showLoginScreen() {
     const overlay = document.getElementById('loginOverlay');
     const body = document.getElementById('adminBody');
     const loginInfo = document.getElementById('loginInfo');
+    const authFallback = document.getElementById('authFallback');
     
     if (overlay) {
         overlay.classList.remove('hidden');
@@ -118,20 +206,26 @@ function showLoginScreen() {
     if (loginInfo) {
         loginInfo.style.display = 'none';
     }
+    if (authFallback) {
+        authFallback.style.display = 'none';
+    }
     
     // Hide error messages
     showLoginError('');
 }
 
-function showAdminPanel() {
-    const overlay = document.getElementById('loginOverlay');
-    const body = document.getElementById('adminBody');
-    
-    if (overlay) {
-        overlay.classList.add('hidden');
+function showAuthFallback() {
+    const authFallback = document.getElementById('authFallback');
+    if (authFallback) {
+        authFallback.style.display = 'block';
     }
-    if (body) {
-        body.classList.remove('admin-locked');
+}
+
+function showLoginInfo(message) {
+    const loginInfo = document.getElementById('loginInfo');
+    if (loginInfo) {
+        loginInfo.textContent = message;
+        loginInfo.style.display = message ? 'block' : 'none';
     }
 }
 
@@ -157,11 +251,15 @@ function showLoginError(message) {
     }
 }
 
-function showLoginInfo(message) {
-    const loginInfo = document.getElementById('loginInfo');
-    if (loginInfo) {
-        loginInfo.textContent = message;
-        loginInfo.style.display = 'block';
+function showAdminPanel() {
+    const overlay = document.getElementById('loginOverlay');
+    const body = document.getElementById('adminBody');
+    
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
+    if (body) {
+        body.classList.remove('admin-locked');
     }
 }
 
