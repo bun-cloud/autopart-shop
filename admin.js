@@ -311,17 +311,89 @@ function showAdminPanel() {
 
 // Global function to open login modal
 function openLoginModal() {
-    if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.open === 'function') {
-        try {
-            netlifyIdentity.open();
-        } catch (e) {
-            console.error('Error opening login modal:', e);
-            alert('Error opening login: ' + e.message);
+    console.log('=== DIAGNOSTIC INFO ===');
+    console.log('netlifyIdentity exists:', typeof netlifyIdentity !== 'undefined');
+    
+    if (typeof netlifyIdentity !== 'undefined') {
+        console.log('netlifyIdentity object keys:', Object.keys(netlifyIdentity));
+        console.log('netlifyIdentity.open exists:', typeof netlifyIdentity.open === 'function');
+        console.log('netlifyIdentity.init exists:', typeof netlifyIdentity.init === 'function');
+        console.log('netlifyIdentity.currentUser exists:', typeof netlifyIdentity.currentUser === 'function');
+        
+        if (typeof netlifyIdentity.open === 'function') {
+            try {
+                netlifyIdentity.open();
+                console.log('Login modal opened successfully');
+            } catch (e) {
+                console.error('Error opening login modal:', e);
+                alert('Error opening login: ' + e.message);
+            }
+        } else {
+            console.error('netlifyIdentity.open is not available');
+            alert('Authentication not ready. Please refresh the page.');
         }
     } else {
         console.error('netlifyIdentity is not available');
         alert('Authentication not ready. Please refresh the page.');
     }
+    console.log('=== END DIAGNOSTIC ===');
+}
+
+// Global diagnostic function
+function checkAuthStatus() {
+    console.log('=== AUTH STATUS ===');
+    console.log('netlifyIdentity:', typeof netlifyIdentity);
+    console.log('identityReady:', identityReady);
+    console.log('identityInitAttempts:', identityInitAttempts);
+    
+    if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.currentUser === 'function') {
+        const currentUser = netlifyIdentity.currentUser();
+        console.log('Current Netlify user:', currentUser ? currentUser.email : 'None');
+    }
+    
+    const storedUser = localStorage.getItem('adminUser');
+    console.log('Stored user in localStorage:', storedUser ? 'Yes' : 'No');
+    if (storedUser) {
+        try {
+            const userData = JSON.parse(storedUser);
+            console.log('Stored email:', userData.email);
+        } catch (e) {
+            console.error('Error parsing stored user:', e);
+        }
+    }
+    console.log('=== END AUTH STATUS ===');
+}
+
+// Manual login function - use this if login event doesn't fire
+function manualLogin() {
+    console.log('=== MANUAL LOGIN CHECK ===');
+    if (typeof netlifyIdentity !== 'undefined' && typeof netlifyIdentity.currentUser === 'function') {
+        const user = netlifyIdentity.currentUser();
+        if (user) {
+            console.log('User detected from Netlify:', user.email);
+            console.log('Logging in manually...');
+            
+            // Store user data
+            localStorage.setItem('adminUser', JSON.stringify({
+                email: user.email,
+                id: user.id,
+                token: user.token,
+                loggedInAt: new Date().toISOString()
+            }));
+            
+            // Show admin panel
+            showAdminPanel();
+            showToast(`Welcome, ${user.email}!`);
+            console.log('Manual login complete!');
+        } else {
+            console.log('No user logged into Netlify Identity');
+            alert('Please log in using the Netlify Identity modal first, then click "Check Login Status" again.');
+        }
+    } else {
+        console.log('netlifyIdentity not available');
+        alert('netlifyIdentity not available');
+    }
+    console.log('=== END MANUAL LOGIN ===');
 }
 
 // Global function to logout
@@ -1444,3 +1516,5 @@ window.resetForm = resetForm;
 window.resetDatabase = resetDatabase;
 window.exportToCSV = exportToCSV;
 window.openLoginModal = openLoginModal;
+window.checkAuthStatus = checkAuthStatus;
+window.manualLogin = manualLogin;
