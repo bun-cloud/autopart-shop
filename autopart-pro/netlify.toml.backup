@@ -1,0 +1,22 @@
+[build]
+  publish = "."
+
+[dev]
+  command = "npx serve ."
+  port = 3000
+  targetPort = 8080
+
+[context.production]
+  environment = { }
+
+[context.deploy-preview]
+  environment = { }
+
+[context.branch-deploy]
+  environment = { }
+
+# Handle SPA routing if needed
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

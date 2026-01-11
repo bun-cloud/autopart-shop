@@ -1,0 +1,9 @@
+{
+  "id": 4,
+  "name": "Premium Oil Filter",
+  "category": "Filters",
+  "price": 12.99,
+  "brand": "Bosch",
+  "description": "High-capacity oil filter with premium filtration media. Traps contaminants effectively and ensures optimal engine protection.",
+  "sold": false
+}

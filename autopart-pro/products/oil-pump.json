@@ -1,0 +1,9 @@
+{
+  "id": 9,
+  "name": "High-Volume Oil Pump",
+  "category": "Engine Parts",
+  "price": 79.99,
+  "brand": "Melling",
+  "description": "High-performance oil pump with increased flow rate. Features precision-machined components for reliable lubrication.",
+  "sold": false
+}
